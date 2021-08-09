@@ -3,6 +3,7 @@ from flask_pymongo import PyMongo
 from application.data_models.post import Post
 from application.data_models.user import User
 from application.data_translators.user_translator import UserTranslator
+from application.data_translators.post_tranlator import PostTranslator
 from application.db_worker import FMongoDb
 from pymongo import MongoClient
 
@@ -18,6 +19,7 @@ app.config['MONGO_DBNAME'] = "blog_database"
 app.config['SECRET_KEY'] = "SECRET"
 
 ut = UserTranslator()
+pt = PostTranslator()
 mongo = PyMongo(app)
 fdb = FMongoDb(mongo)
 

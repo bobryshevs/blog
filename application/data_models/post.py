@@ -8,19 +8,14 @@ class PostAuthorInterface:
 
 
 class Post:
-    def __init__(self, text: str, author: PostAuthorInterface, create_date: datetime = datetime.now(), img_link: str=''):
+    def __init__(self, text: str, author: PostAuthorInterface, date_of_creation: datetime = datetime.now()):
         self.__text = text
-        self.__img_link = img_link
         self.__author = author
-        self.__create_date = create_date
+        self.__date_of_creation = date_of_creation
 
     @property
     def text(self) -> str:
         return self.__text
-
-    @property
-    def img_link(self) -> str:
-        return self.__img_link
 
     @property
     def author(self) -> PostAuthorInterface:
@@ -28,7 +23,7 @@ class Post:
 
     @property
     def create_date(self) -> datetime:
-        return self.__create_date
+        return self.__date_of_creation
 
     def to_json(self):
         return str(self.__dict__)

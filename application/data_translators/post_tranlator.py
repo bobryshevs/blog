@@ -1,11 +1,23 @@
 from application.data_models.post import Post
+from datetime import datetime
+
 
 class PostTranslator:
 
     def to_mongo(self, post: Post) -> dict:
         return {
             "text": post.text,
-            "img": post.img_link,
             "author": post.author,
             "create_date": post.create_date
         }
+
+    def from_dict(self, post: dict) -> Post:
+        return Post(
+            text=post['text'],
+            author=post['author'],
+            date_of_creation=datetime.now())
+
+    def from_mongo(self, mongo_post: dict) -> Post:
+        del mongo_post['_id']
+        return self.from_dict(mongo_post)
+
