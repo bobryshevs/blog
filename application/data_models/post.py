@@ -8,7 +8,7 @@ class PostAuthorInterface:
 
 
 class Post:
-    def __init__(self, text: str, img_link: str, author: PostAuthorInterface, create_date: datetime = datetime.now()):
+    def __init__(self, text: str, author: PostAuthorInterface, create_date: datetime = datetime.now(), img_link: str=''):
         self.__text = text
         self.__img_link = img_link
         self.__author = author
