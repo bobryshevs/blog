@@ -1,4 +1,5 @@
 from flask_pymongo import PyMongo
+from bson.objectid import ObjectId
 from application.data_models.user import User
 from application.data_translators.user_translator import UserTranslator
 from application.data_translators.post_tranlator import PostTranslator
@@ -23,6 +24,9 @@ class FMongoDb:
         posts = self.__posts_coll.find().sort('_id', -1).skip(page_number*page_size - page_size).limit(page_size)
         return list(posts)
 
+    def get_post_by_id(self, post_id: str) -> dict:
+        return self.__posts_coll.find_one({'_id': ObjectId(post_id)})
+
 
 if __name__ == '__main__':
     from application.app import mongo
@@ -32,5 +36,5 @@ if __name__ == '__main__':
     pt =PostTranslator()
     usr = User(name='Guest')
 
-    a = [pt.to_mongo(pt.from_mongo(i)) for i in list(fdb.get_posts(page_number=2, page_size=2))]
-    print(a)
+    post = fdb.get_post_by_id(post_id='6111371a6e34b54502afbf3d')
+

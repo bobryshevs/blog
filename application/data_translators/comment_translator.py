@@ -7,6 +7,6 @@ class CommentTranslator:
         return {
             "user_id": comment.user_id,
             "text": comment.text,
-            "date_of_creation": comment.date_of_creation,
+            "date_of_creation": comment.timestamp_of_creation,
             "post_id": comment.post_id
         }
