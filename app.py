@@ -1,25 +1,21 @@
 from flask import Flask, jsonify, request, render_template
+from flask.helpers import url_for
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 from models.post import Post
 from translators.post_tranlator import PostTranslator
 from db_worker import FMongoDb
-from pymongo import MongoClient
+from blueprints.post import post
+
 
 
 # Constants
-MONGO_HOST = "localhost"
-MONGO_PORT = 27017
-MONGO_DATABASE_NAME = "blog_database"
+
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = f"mongodb://{MONGO_HOST}:{MONGO_PORT}/{MONGO_DATABASE_NAME}"
-app.config['MONGO_DBNAME'] = "blog_database"
 app.config['SECRET_KEY'] = "SECRET"
 
-
-mongo = PyMongo(app)
-fdb = FMongoDb(mongo)
-post_translator = PostTranslator()
+app.register_blueprint(post, url_prefix='/post')
 
 
 @app.route('/publish_post', methods=['POST'])
