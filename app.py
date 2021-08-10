@@ -1,9 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 from flask_pymongo import PyMongo
-from data_models.post import Post
-from data_models.user import User
-from data_translators.user_translator import UserTranslator
-from data_translators.post_tranlator import PostTranslator
+from models.post import Post
+from translators.post_tranlator import PostTranslator
 from db_worker import FMongoDb
 from pymongo import MongoClient
 
@@ -18,8 +16,7 @@ app.config['MONGO_URI'] = f"mongodb://{MONGO_HOST}:{MONGO_PORT}/{MONGO_DATABASE_
 app.config['MONGO_DBNAME'] = "blog_database"
 app.config['SECRET_KEY'] = "SECRET"
 
-ut = UserTranslator()
-pt = PostTranslator()
+
 mongo = PyMongo(app)
 fdb = FMongoDb(mongo)
 

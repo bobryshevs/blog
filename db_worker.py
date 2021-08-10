@@ -1,8 +1,5 @@
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
-from data_models.user import User
-from data_translators.user_translator import UserTranslator
-from data_translators.post_tranlator import PostTranslator
 
 
 class FMongoDb:
@@ -32,9 +29,7 @@ if __name__ == '__main__':
     from app import mongo
 
     fdb = FMongoDb(mongo)
-    ut = UserTranslator()
-    pt =PostTranslator()
-    usr = User(name='Guest')
+    user = User(name='Guest')
 
     post = fdb.get_post_by_id(post_id='6111371a6e34b54502afbf3d')
 
