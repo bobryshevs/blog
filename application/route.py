@@ -8,13 +8,12 @@ from pymongo import MongoClient
 from application.app import app, ut, pt, fdb
 
 
-@app.route('/create_user', methods=['PUT'])
+@app.route('/create_user', methods=['POST'])
 def create_user():
-    if request.method == 'PUT':
-        req = request.json
-        usr = ut.to_mongo(ut.from_dict(req))
-        fdb.add_user(usr)
-        return '', 201  # Created
+    req = request.json
+    usr = ut.to_mongo(ut.from_dict(req))
+    fdb.add_user(usr)
+    return '', 201  # Created
 
 
 @app.route('/publish_post', methods=['POST'])
