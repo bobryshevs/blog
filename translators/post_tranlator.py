@@ -8,7 +8,7 @@ class PostTranslator:
         return {
             "text": post.text,
             "author": post.author,
-            "create_date": post.create_date
+            "create_date": post.date_of_creation
         }
 
     def from_dict(self, post: dict) -> Post:

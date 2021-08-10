@@ -9,10 +9,6 @@ class FMongoDb:
         self.__users_coll = mongo_.db['users']
         self.__posts_coll = mongo_.db['posts']
 
-    def add_user(self, user: dict) -> bool:
-        self.__users_coll.insert_one(user)
-        return True
-
     def insert_post(self, post: dict) -> bool:
         self.__posts_coll.insert_one(post)
         return True
@@ -29,7 +25,6 @@ if __name__ == '__main__':
     from app import mongo
 
     fdb = FMongoDb(mongo)
-    user = User(name='Guest')
 
     post = fdb.get_post_by_id(post_id='6111371a6e34b54502afbf3d')
 
