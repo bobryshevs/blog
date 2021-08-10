@@ -26,8 +26,8 @@ def publish_post():
 
 @app.route('/get_posts', methods=['GET'])
 def get_posts():
-    posts = fdb.get_posts(page_number=request.args.get('page_number'),
-                          page_size=request.args.get('page_size'))
+    posts = fdb.get_posts(page_number=request.args.get('page_number', type=int),
+                          page_size=request.args.get('page_size', type=int))
     return jsonify([pt.to_mongo(pt.from_mongo(post)) for post in posts]), 200
 
 
