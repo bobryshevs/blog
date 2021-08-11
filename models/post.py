@@ -2,13 +2,15 @@ from datetime import datetime
 
 
 class Post:
-    def __init__(self, text: str, author: str):
+    def __init__(self, text: str, author: str, date_of_creation: str):
+        self.m_id = None
         self.text: str = text
         self.author: str = author
-        self.date_of_creation: str = datetime.now().isoformat()
+        self.date_of_creation: str = date_of_creation
+        # Todo: проверка корректности даты
 
-    def to_json(self) -> dict:
-        return self.__dict__
+    
+
 
 
 

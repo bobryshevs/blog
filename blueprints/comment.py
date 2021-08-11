@@ -6,7 +6,7 @@ comment = Blueprint('comment', __name__)
 
 @comment.route('/<comment_id>', methods=['GET'])
 def get_comment_by_id(comment_id: str):
-    comment = comment_repository.get_comment_by_id(comment_id)
+    comment = comment_repository.get_by_id(comment_id)
     return comment
 
 

@@ -10,7 +10,7 @@ class CommentRepository(Repository):
         self.collection = client.blog_database.comments
 
     
-    def get_comment_by_id(self, comment_id: str):
+    def get_by_id(self, comment_id: str):
         obj_comment_id = ObjectId(comment_id)
         comment = self.collection.find_one({'_id': obj_comment_id})
         self.change_element_objID_to_str(comment)

@@ -1,9 +1,14 @@
+from bson import ObjectId
+from bson.errors import InvalidId
+
+
 class Repository:
+        
+    def is_valid_obj_id(self, obj_id: str) -> bool:
+        valid = True
+        try:
+            obj_id = ObjectId(obj_id)
+            return valid
+        except InvalidId:
+            return not valid
 
-    def change_element_objID_to_str(self, elem: dict) -> None:
-        elem['_id'] = str(elem['_id'])
-
-    
-    def change_list_elements_objID_to_str(self, elements: list) -> None:
-        for elem in elements:
-            self.change_element_objID_to_str(elem)

@@ -8,16 +8,22 @@ class PostTranslator:
         return {
             "text": post.text,
             "author": post.author,
-            "create_date": post.date_of_creation
+            "date_of_creation": post.date_of_creation
         }
 
     def from_dict(self, post: dict) -> Post:
         return Post(
             text=post['text'],
             author=post['author'],
-            date_of_creation=datetime.now())
+            date_of_creation=datetime.now().isoformat())
 
     def from_mongo(self, mongo_post: dict) -> Post:
-        del mongo_post['_id']
-        return self.from_dict(mongo_post)
+        post = Post(
+            text=mongo_post['text'], 
+            author=mongo_post['author'],
+            date_of_creation=mongo_post['date_of_creation'])
+        post.m_id = str(mongo_post['_id'])
+        return post
+    
+
 

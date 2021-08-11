@@ -1,9 +1,8 @@
-from os import O_NDELAY
-import bson
+from typing import Any
 from pymongo import MongoClient
 from bson import ObjectId
-from bson.errors import InvalidId
 from repositories.repository import Repository
+from structure import post_translator
 from models.post import Post
 
 
@@ -14,37 +13,51 @@ class PostRepository(Repository):
         self.collection = client.blog_database.posts
 
 
-    def get_post_pages(self, page_number: int, page_size: int) -> list:
+    def get_pages(self, 
+                  page_number: int, 
+                  page_size: int
+                  ) -> list[Post]:
+    
         posts = list(self.collection.find().sort('_id', -1) \
                 .skip(page_number*page_size - page_size)\
                 .limit(page_size))
-        self.change_list_elements_objID_to_str(posts)
+        posts = [
+            post_translator.from_mongo(post)
+            for post in posts
+            if post is not None
+        ]
         return posts
 
-    def get_post_by_id(self, post_id: str) -> dict:
+    def get_by_id(self, post_id: str) -> Any:
+        if not self.is_valid_obj_id(post_id):
+            return None
         obj_post_id = ObjectId(post_id)
         post = self.collection.find_one({"_id": obj_post_id})
-        self.change_element_objID_to_str(post)
-        return post
+        return post_translator.from_mongo(post)
 
-    def delete_post_by_id(self, post_id: str):
+    def delete_by_id(self, post_id: str) -> bool:
+        deleted = True
+        
+        if not self.is_valid_obj_id(post_id) \
+            or self.get_by_id(post_id) is None:
+            return not deleted
+
         self.collection.delete_one({'_id': ObjectId(post_id)})
-        return 
+        return deleted 
 
 
-    def create_new_post(self, text: str, author: str) -> str:
+    def create(self, text: str, author: str) -> str:
         post = Post(text=text, author=author)
         created_id = self.collection.insert_one(post.to_json()).inserted_id
         return str(created_id)
 
-    def update_post_by_id(self, post_id: str, text: str, author: str):
+    def update(self, post_id: str, text: str, author: str):
         self.collection.update_one({'_id': ObjectId(post_id)},
                                    {"$set":{"text": text, "author": author}})
         return 
-
-
-
     
+
+
 
     def print_about(self) -> None:
         print(f'{self.client=}\n'
@@ -59,4 +72,4 @@ if __name__ == "__main__":
 
     post_repo = PostRepository(mongo_client)
 
-    post_repo.create_new_post(text='Alliluya', author="sviat")
+    post_repo.create(text='Alliluya', author="sviat")
