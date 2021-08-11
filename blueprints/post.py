@@ -1,5 +1,5 @@
 from flask import Blueprint, request, Response, jsonify
-from structure import post_repository, post_translator
+from structure import post_repository
 from structure import post_presenter
 
 
@@ -26,10 +26,9 @@ def get_multiple_posts_by_IDs():
 
 @post.route('/<post_id>', methods=['GET'])
 def get_post_by_id(post_id: str):
-    post = post_repository.get_by_id(post_id)
+    post_obj = post_repository.get_by_id(post_id)
     if post is None:
         return '', 404
-    post_obj = post_translator.from_mongo(post)
     post_json = post_presenter.to_json(post_obj)
     return post, 200
 

@@ -12,6 +12,9 @@ class PostTranslator:
         }
 
     def from_dict(self, post: dict) -> Post:
+        '''
+        returns Post without m_id
+        '''
         return Post(
             text=post['text'],
             author=post['author'],

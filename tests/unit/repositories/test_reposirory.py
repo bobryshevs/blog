@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from repositories.posts_repository import PostRepository 
+from repositories.post_repository import PostRepository 
 
 
 class Constants:
@@ -9,7 +9,7 @@ class Constants:
     
 
 
-class TestPostRepository:
+class TestRepository:
     '''
     Один и тот же метод может по-разному отработать
     в зависимости от входных данных...
@@ -24,11 +24,6 @@ class TestPostRepository:
     def teardown_class(self):
         pass
 
-
-    def test_get_post_pages(self):
-        """
-        Eсли в базе не
-        """
         
 
 

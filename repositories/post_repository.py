@@ -1,13 +1,14 @@
+from translators.post_tranlator import PostTranslator
 from typing import Any
 from pymongo import MongoClient
 from bson import ObjectId
 from repositories.repository import Repository
-from structure import post_translator
 from models.post import Post
 
 
 class PostRepository(Repository):
-    def __init__(self, client: MongoClient):
+    def __init__(self, client: MongoClient, translator: PostTranslator):
+        super().__init__(translator)
         self.client = client
         self.db = client.blog_database
         self.collection = client.blog_database.posts
@@ -22,7 +23,7 @@ class PostRepository(Repository):
                 .skip(page_number*page_size - page_size)\
                 .limit(page_size))
         posts = [
-            post_translator.from_mongo(post)
+            self.translator.from_mongo(post)
             for post in posts
             if post is not None
         ]
@@ -33,7 +34,7 @@ class PostRepository(Repository):
             return None
         obj_post_id = ObjectId(post_id)
         post = self.collection.find_one({"_id": obj_post_id})
-        return post_translator.from_mongo(post)
+        return self.translator.from_mongo(post)
 
     def delete_by_id(self, post_id: str) -> bool:
         deleted = True
