@@ -3,32 +3,33 @@ import bson
 from pymongo import MongoClient
 from bson import ObjectId
 from bson.errors import InvalidId
-
+from repositories.repository import Repository
 from models.post import Post
 
 
-class PostRepository:
+class PostRepository(Repository):
     def __init__(self, client: MongoClient):
         self.client = client
         self.db = client.blog_database
         self.collection = client.blog_database.posts
 
+
+    def get_post_pages(self, page_number: int, page_size: int) -> list:
+        posts = list(self.collection.find().sort('_id', -1) \
+                .skip(page_number*page_size - page_size)\
+                .limit(page_size))
+        self.change_list_elements_objID_to_str(posts)
+        return posts
+
     def get_post_by_id(self, post_id: str) -> dict:
-        try:
-            post_id = ObjectId(post_id)
-        except InvalidId as err:
-            return f'400 {err}', 400
-
-        post = self.collection.find_one({"_id": ObjectId(post_id)})
-        if post is None:
-            return '404 Post not found', 404
-
-        post['_id'] = post_id
-        return post, 200
+        obj_post_id = ObjectId(post_id)
+        post = self.collection.find_one({"_id": obj_post_id})
+        self.change_element_objID_to_str(post)
+        return post
 
     def delete_post_by_id(self, post_id: str):
-        result = self.collection.delete_one({'_id': ObjectId(post_id)})
-        return '', 204
+        self.collection.delete_one({'_id': ObjectId(post_id)})
+        return 
 
 
     def create_new_post(self, text: str, author: str) -> str:
@@ -40,6 +41,8 @@ class PostRepository:
         self.collection.update_one({'_id': ObjectId(post_id)},
                                    {"$set":{"text": text, "author": author}})
         return 
+
+
 
     
 
