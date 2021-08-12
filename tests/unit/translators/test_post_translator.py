@@ -1,6 +1,7 @@
 import pytest
 from pymongo import MongoClient
 from bson import ObjectId
+from datetime import datetime
 from translators import PostTranslator
 from models import Post
 
@@ -10,67 +11,51 @@ def post_translator():
     return PostTranslator()
 
 
-@pytest.fixture(scope='module')
-def posts_collection():
-    MONGO_HOST = "localhost"
-    MONGO_PORT = 27017
-    mongo_client = MongoClient(f"mongodb://{MONGO_HOST}:{MONGO_PORT}/")
-    yield mongo_client.blog_database.posts
-    mongo_client.close()
+#!!! Есть мысль, что это пригодится при тестировании репозитория
+# @pytest.fixture(scope='module')
+# def posts_collection():
+#     MONGO_HOST = "localhost"
+#     MONGO_PORT = 27017
+#     mongo_client = MongoClient(f"mongodb://{MONGO_HOST}:{MONGO_PORT}/")
+#     yield mongo_client.blog_database.posts
+#     mongo_client.close()
 
 
-
-@pytest.fixture(scope="function")
-def dict_post_and_mongo_post(posts_collection):
-    post = {
-        "text":"Text for mongo_post_fixture",
-        "author":"Sviatoslav Bobryshev",
-        "date_of_creation":"2021-08-11T16:52:25.551959"
-    }
-    m_id = posts_collection.insert_one(post).inserted_id
-    post['_id'] = str(m_id)
-    m_post = posts_collection.find_one({"_id": ObjectId(m_id)})
-    yield post, m_post
-    posts_collection.delete_one({'_id': ObjectId(m_id)})
-    
-    
-
-
-def test_to_mongo_valid(post_translator):
+def test_to_document_valid(post_translator):
     post = Post(
         text="Text for post",
         author="Sviatoslav Bobryshev",
-        date_of_creation="2021-08-11T16:52:25.551959"
+        date_of_creation=datetime(2021, 8, 11, 16, 52, 25, 551959)
     )
 
-    expected = {
+    document = {
         "text": "Text for post",
         "author": "Sviatoslav Bobryshev",
         "date_of_creation": "2021-08-11T16:52:25.551959"
     }
 
-    current = post_translator.to_mongo(post)
+    result = post_translator.to_document(post)
 
-    assert expected == current, \
-        "PostTranslator.to_mongo returns INVALID dict"
+    assert isinstance(result, dict) is True
+    assert document['text'] == result['text']
+    assert document['author'] == result['author']
+    assert document['date_of_creation'] == result['date_of_creation']
 
 
+def test_from_document_valid(post_translator):
+    document = {
+        "_id": ObjectId('6112f2704808cefd2cf9ccfb'),
+        "text": "Text from document valid",
+        "author": "Sviatoslav",
+        "date_of_creation": "2021-08-11T00:41:04.327873"
+    }
 
-def test_from_mongo_valid(dict_post_and_mongo_post,
-                          post_translator):
-    dict_post, mongo_post = dict_post_and_mongo_post
-    expected = Post(
-        m_id=dict_post['_id'],
-        text=dict_post['text'],
-        author=dict_post['author'],
-        date_of_creation=dict_post['date_of_creation']
-    )
-    print(type(expected.m_id))
+    result = post_translator.from_document(document)
 
-    current = post_translator.from_mongo(mongo_post)
-
-    assert expected.is_equal(current), \
-        'PostTranslator.from_mongo returns INVALID Post object'
-
-    
-    
+    assert isinstance(result, Post) is True
+    assert document['_id'] == result.id
+    assert document['text'] == result.text
+    assert document['author'] == result.author
+    assert document['date_of_creation'] == result.date_of_creation.isoformat()
+    assert datetime.fromisoformat(document['date_of_creation'])\
+        == result.date_of_creation

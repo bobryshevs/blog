@@ -13,15 +13,14 @@ class PostRepository(Repository):
         self.db = client.blog_database
         self.collection = client.blog_database.posts
 
-
-    def get_pages(self, 
-                  page_number: int, 
+    def get_pages(self,
+                  page_number: int,
                   page_size: int
                   ) -> list[Post]:
-    
-        posts = list(self.collection.find().sort('_id', -1) \
-                .skip(page_number*page_size - page_size)\
-                .limit(page_size))
+
+        posts = list(self.collection.find().sort('_id', -1)
+                     .skip(page_number*page_size - page_size)
+                     .limit(page_size))
         posts = [
             self.translator.from_mongo(post)
             for post in posts
@@ -38,14 +37,13 @@ class PostRepository(Repository):
 
     def delete_by_id(self, post_id: str) -> bool:
         deleted = True
-        
+
         if not self.is_valid_obj_id(post_id) \
-            or self.get_by_id(post_id) is None:
+                or self.get_by_id(post_id) is None:
             return not deleted
 
         self.collection.delete_one({'_id': ObjectId(post_id)})
-        return deleted 
-
+        return deleted
 
     def create(self, text: str, author: str) -> str:
         post = Post(text=text, author=author)
@@ -54,11 +52,8 @@ class PostRepository(Repository):
 
     def update(self, post_id: str, text: str, author: str):
         self.collection.update_one({'_id': ObjectId(post_id)},
-                                   {"$set":{"text": text, "author": author}})
-        return 
-    
-
-
+                                   {"$set": {"text": text, "author": author}})
+        return
 
     def print_about(self) -> None:
         print(f'{self.client=}\n'

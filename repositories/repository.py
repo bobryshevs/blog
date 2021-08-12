@@ -5,7 +5,7 @@ from bson.errors import InvalidId
 class Repository:
     def __init__(self, translator) -> None:
         self.translator = translator
-        
+
     def is_valid_obj_id(self, obj_id: str) -> bool:
         valid = True
         try:
@@ -13,4 +13,3 @@ class Repository:
             return valid
         except InvalidId:
             return not valid
-

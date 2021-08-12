@@ -4,11 +4,11 @@ from datetime import datetime
 
 class PostTranslator:
 
-    def to_mongo(self, post: Post) -> dict:
+    def to_document(self, post: Post) -> dict:
         return {
             "text": post.text,
             "author": post.author,
-            "date_of_creation": post.date_of_creation
+            "date_of_creation": post.date_of_creation.isoformat()
         }
 
     # ToDO: move this function to the PostPresenter
@@ -19,15 +19,13 @@ class PostTranslator:
         return Post(
             text=post['text'],
             author=post['author'],
-            date_of_creation=datetime.now().isoformat())
+            date_of_creation=datetime.now())
 
-    def from_mongo(self, mongo_post: dict) -> Post:
+    def from_document(self, mongo_post: dict) -> Post:
         post = Post(
-            text=mongo_post['text'], 
+            text=mongo_post['text'],
             author=mongo_post['author'],
-            date_of_creation=mongo_post['date_of_creation'])
-        post.m_id = str(mongo_post['_id'])
+            date_of_creation=datetime.fromisoformat(
+                mongo_post['date_of_creation']),
+            m_id=mongo_post['_id'])
         return post
-    
-
-
