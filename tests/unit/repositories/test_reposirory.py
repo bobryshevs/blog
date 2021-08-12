@@ -1,29 +1,16 @@
+from _pytest.config import main
 from pymongo import MongoClient
-from repositories.post_repository import PostRepository 
+from mock import Mock
+import pytest
+# from repositories import PostRepository 
+
+@pytest.fixture(scope="function")
+def client():
+    mock = Mock()
+    mock.str.return_value = '123'
+    return mock
 
 
-class Constants:
-    MONGO_HOST = "localhost"
-    MONGO_PORT = 27017
-    mongo_client = MongoClient(f"mongodb://{MONGO_HOST}:{MONGO_PORT}/")
-    
-
-
-class TestRepository:
-    '''
-    Один и тот же метод может по-разному отработать
-    в зависимости от входных данных...
-    '''
-
-    @classmethod
-    def setup_class(self):
-        self.post_repository = PostRepository(Constants.mongo_client)
-
-
-    @classmethod
-    def teardown_class(self):
-        pass
-
-        
-
-
+def test_first_mock(client):
+    print(client.str())
+    assert 0
