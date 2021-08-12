@@ -11,16 +11,6 @@ def post_translator():
     return PostTranslator()
 
 
-#!!! Есть мысль, что это пригодится при тестировании репозитория
-# @pytest.fixture(scope='module')
-# def posts_collection():
-#     MONGO_HOST = "localhost"
-#     MONGO_PORT = 27017
-#     mongo_client = MongoClient(f"mongodb://{MONGO_HOST}:{MONGO_PORT}/")
-#     yield mongo_client.blog_database.posts
-#     mongo_client.close()
-
-
 def test_to_document_valid(post_translator):
     post = Post(
         text="Text for post",
