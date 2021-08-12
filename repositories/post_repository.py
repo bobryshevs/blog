@@ -10,7 +10,6 @@ class PostRepository(Repository):
     def __init__(self, client: MongoClient, translator: PostTranslator):
         super().__init__(translator)
         self.client = client
-        self.db = client.blog_database
         self.collection = client.blog_database.posts
 
     def get_pages(self,
@@ -22,28 +21,25 @@ class PostRepository(Repository):
                      .skip(page_number*page_size - page_size)
                      .limit(page_size))
         posts = [
-            self.translator.from_mongo(post)
+            self.translator.from_document(post)
             for post in posts
             if post is not None
         ]
         return posts
 
-    def get_by_id(self, post_id: str) -> Any:
-        if not self.is_valid_obj_id(post_id):
+    def get_by_id(self, post_id: ObjectId) -> Any:
+        post = self.collection.find_one({"_id": post_id})
+        if post is None:
             return None
-        obj_post_id = ObjectId(post_id)
-        post = self.collection.find_one({"_id": obj_post_id})
-        return self.translator.from_mongo(post)
+        else:
+            return self.translator.from_document(post)
 
-    def delete_by_id(self, post_id: str) -> bool:
-        deleted = True
-
-        if not self.is_valid_obj_id(post_id) \
-                or self.get_by_id(post_id) is None:
-            return not deleted
+    def delete_by_id(self, post_id: ObjectId) -> bool:
+        if self.get_by_id(post_id) is None:
+            return False
 
         self.collection.delete_one({'_id': ObjectId(post_id)})
-        return deleted
+        return True
 
     def create(self, text: str, author: str) -> str:
         post = Post(text=text, author=author)
@@ -55,17 +51,10 @@ class PostRepository(Repository):
                                    {"$set": {"text": text, "author": author}})
         return
 
-    def print_about(self) -> None:
-        print(f'{self.client=}\n'
-              f'{self.db=}\n'
-              f'{self.collection = }')
-
-
 if __name__ == "__main__":
     MONGO_HOST = "localhost"
     MONGO_PORT = 27017
     mongo_client = MongoClient(f"mongodb://{MONGO_HOST}:{MONGO_PORT}/")
 
     post_repo = PostRepository(mongo_client)
-
-    post_repo.create(text='Alliluya', author="sviat")
+    print(post_repo.get_by_id('asd'))
