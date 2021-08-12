@@ -3,10 +3,9 @@ from flask.helpers import url_for
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from models.post import Post
-from translators.post_tranlator import PostTranslator
+from translators import PostTranslator
 from db_worker import FMongoDb
-from blueprints.post import post
-from blueprints.comment import comment
+from blueprints import post, comment
 
 
 

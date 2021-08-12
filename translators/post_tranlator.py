@@ -11,6 +11,7 @@ class PostTranslator:
             "date_of_creation": post.date_of_creation
         }
 
+    # ToDO: move this function to the PostPresenter
     def from_dict(self, post: dict) -> Post:
         '''
         returns Post without m_id
