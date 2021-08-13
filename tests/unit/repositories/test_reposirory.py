@@ -1,4 +1,3 @@
-from bson import objectid
 from repositories.post_repository import PostRepository
 from datetime import datetime
 from bson.objectid import ObjectId
@@ -18,6 +17,10 @@ class TestPostRepository:
 
     def teardown(self):
         pass
+
+
+# --- update TESTS <<START>> --- #
+
 
 # --- create TESTS <<START>> --- #
 
@@ -101,7 +104,6 @@ class TestPostRepository:
             assert isinstance(result, bool)
             assert expected == result
 
-        assert self.col.find_one.call_count == len(valid_id_list)
 
     def test_delete_by_id_invalid_objId(self):
         '''
@@ -119,7 +121,6 @@ class TestPostRepository:
             assert isinstance(result, bool)
             assert expected == result
 
-        assert self.col.find_one.call_count == len(invalid_id_list)
 
     def test_delete_by_id_post_exists(self):
         '''
@@ -143,7 +144,6 @@ class TestPostRepository:
             assert isinstance(result, bool)
             assert expected == result
 
-        assert self.col.delete_one.call_count == len(documents)
 
 # --- delete_by_id TESTS <<END>> --- #
 
@@ -177,7 +177,6 @@ class TestPostRepository:
 
         assert result is None
         assert result == expected
-        assert self.repository.collection.find_one.call_count == 1
 
     def test_get_by_id_existsId(self):
         '''
@@ -212,7 +211,4 @@ class TestPostRepository:
             assert expected['date_of_creation'] == \
                 result['date_of_creation']
 
-        assert col.find_one.call_count == len(documents), \
-            f"Mock find_one must be called {len(documents)} times" \
-            f"but {col.find_one.call_count} in this case."
 # --- get_by_id TESTS <<END>> --- #

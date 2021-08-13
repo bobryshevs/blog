@@ -1,5 +1,4 @@
 from datetime import datetime
-from time import strftime
 from translators.post_tranlator import PostTranslator
 from typing import Any
 from pymongo import MongoClient
@@ -37,10 +36,10 @@ class PostRepository(Repository):
             return self.translator.from_document(post)
 
     def delete_by_id(self, post_id: ObjectId) -> bool:
-        if self.get_by_id(post_id) is None:
+        if not isinstance(post_id, ObjectId) or not self.is_exists(post_id): 
             return False
 
-        self.collection.delete_one({'_id': ObjectId(post_id)})
+        self.collection.delete_one({'_id': post_id})
         return True
 
     def create(self, text: str, author: str) -> ObjectId:
@@ -51,10 +50,27 @@ class PostRepository(Repository):
                 self.translator.to_document(post)).inserted_id
         return created_id 
 
-    def update(self, post_id: str, text: str, author: str):
+    def update(self, post_id: ObjectId, text: str, author: str) -> Post:
+        if not isinstance(post_id,  ObjectId) or \
+                    not isinstance(text, str) or \
+                    not isinstance(author, str):
+           return None 
+
+        if not self.is_exists(post_id):
+            return None    
         self.collection.update_one({'_id': ObjectId(post_id)},
                                    {"$set": {"text": text, "author": author}})
-        return
+        return self.get_by_id(post_id)
+    
+
+    def is_exists(self, post_id: ObjectId) -> bool:
+        if not isinstance(post_id, ObjectId):
+            return False
+        
+        if self.get_by_id(post_id):
+            return True
+        
+        return False
 
 if __name__ == "__main__":
     MONGO_HOST = "localhost"
