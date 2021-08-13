@@ -19,188 +19,64 @@ class TestPostRepository:
     def teardown(self):
         pass
 
+    def test_get_by_id_without_post(self):
+        post_id = ObjectId()
+        self.coll.find_one.return_value = None
 
-# --- update TESTS <<START>> --- #
-
-
-# --- create TESTS <<START>> --- #
-
-
-    def test_create_invalid_text(self):
-        '''
-            The post will not be created, because the author field is not valid
-        '''
-        valid_author = 'valid_author'
-        invalid_texts = [1, 1.1, {}, [], set(), ObjectId()]
-        expected = None
-
-        for invalid_text in invalid_texts:
-            result = self.repository.create(invalid_text, valid_author)
-            assert result is None
-
-    def test_create_invalid_author(self):
-        '''
-            The post will not be created, because the author field is not valid
-        '''
-        valid_text = 'valid_text'
-        invalid_authors = [1, 1.1, {}, [], set(), ObjectId()]
-        expected = None
-
-        for invalid_author in invalid_authors:
-            result = self.repository.create(valid_text, invalid_author)
-
-            assert result is None
-
-    def test_create_valid_text_and_author(self):
-        '''
-            The post is being created successfully 
-        '''
-        valid_posts = [
-            Post(
-                text='',
-                author='',
-                date_of_creation=datetime.now(),
-                m_id=ObjectId()),
-            Post(
-                text='very_long_t' * 100,
-                author='very_long_a' * 100,
-                date_of_creation=datetime.now(),
-                m_id=ObjectId()),
-        ]
-        self.coll.update_one.return_value = True
-
-        # for post in valid_posts:
-            
-# --- create TESTS <<END>> --- #
-
-
-# --- delete TESTS <<START>> --- #
-
-
-    def test_delete_post_doesnt_exists(self):
-        '''
-            There is no such post in the database,
-            but the objId is valid
-        '''
-        expected = None
-        self.col.find_one.return_value = None
-
-        valid_id_list = [
-            '6111371a6e34b54502afbf3d',
-            '61113799d359477d3a6669af',
-            '61113c30950e7e9fe536770e'
-        ]
-
-        for valid_id in valid_id_list:
-            result = self.repository.delete(valid_id)
-            assert result is None
-            assert expected == result
-
-    def test_delete_invalid_objId(self):
-        '''
-            There is no such post in the database,
-            since an invalid objId was passed.
-        '''
-        expected = None
-
-        self.col.find_one.return_value = None
-        invalid_id_list = ['', '123', 123, 1.2, [], (), {}]
-
-        for invalid_id in invalid_id_list:
-            result = self.repository.delete(invalid_id)
-
-            assert result is None
-            assert expected == result
-
-    def test_delete_post_exists(self):
-        '''
-            There is a post in the database.
-            The ObjectId passed to the function is valid. 
-        '''
-        expected = None
-
-        documents = [{
-            "_id": ObjectId("6111371a6e34b54502afbf3d"),
-            "text": "first_document",
-            "author": "Sviat",
-            "date_of_creation": datetime(2021, 8, 9, 17, 11, 37, 200000)
-
-        }]
-        id_for_delete = [doc['_id'] for doc in documents]
-        self.col.find_one = MagicMock(side_effect=documents)
-        self.col.delete_one.return_value = True
-
-        for i in range(len(documents)):
-            result = self.repository.delete(id_for_delete[i])
-            assert result is None
-            assert expected == result
-
-
-# --- delete TESTS <<END>> --- #
-
-
-# --- get_by_id TESTS <<START>> --- #
-
-
-    def test_get_by_id_with_ivalid_objId(self):
-        '''
-            Request to database contains an invalid objId
-        '''
-
-        self.col.find_one.return_value = None
-        invalid_id_list = ['', '123', 123, 1.2, [], (), {}]
-
-        expected = None
-        for invalid_id in invalid_id_list:
-            result = self.repository.get_by_id(invalid_id)
-            assert expected == result, \
-                f'Incorrect response with invalid id' \
-                f'which type is {type(invalid_id)}'
-
-    def test_get_by_id_doesnt_existsId(self):
-        '''
-            The database returns None 
-        '''
-
-        expected = None
-        self.repository.coll.find_one.return_value = None
-
-        result = self.repository.get_by_id(post_id=ObjectId())
+        result = self.repository.get_by_id(post_id)
 
         assert result is None
-        assert result == expected
+        self.coll.find_one.assert_called_once_with({'_id': post_id})
 
-    def test_get_by_id_existsId(self):
-        '''
-            The database returns an object that exists.
-            ObjectId is valid
-        '''
 
-        documents = [
-            {
-                "_id": ObjectId("6111371a6e34b54502afbf3d"),
-                "text": "first_document",
-                "author": "Sviat",
-                "date_of_creation": datetime(2021, 8, 9, 17, 11, 37, 200000)
-            },
-            {
-                "_id": ObjectId("61113c30950e7e9fe536770e"),
-                "text": "second_document",
-                "author": "Nick",
-                "date_of_creation": datetime(2021, 8, 9, 16, 10, 37, 200000)
-            }]
+    def test_get_by_id_exists_post(self):
+        post_id = ObjectId()
+        post = Post(
+            text='text',
+            author='author',
+            date_of_creation=datetime.now(),
+            m_id=post_id
+        )
+        document = {
+            'text': post.text,
+            'author': post.author,
+            'date_of_creation': post.date_of_creation,
+            '_id': post.id
+        }
+        self.coll.find_one.return_value = document
 
-        coll = self.repository.coll
-        coll.find_one = MagicMock(side_effect=documents)
+        result = self.repository.get_by_id(post_id)
+        assert result.id == post.id
+        assert result.text == post.text
+        assert result.author == post.author
+        assert result.date_of_creation == post.date_of_creation
+        self.coll.find_one.assert_called_once_with({'_id': post_id})
 
-        for expected in documents:
-            result = self.repository.coll.find_one({ObjectId()})
 
-            assert isinstance(result, dict) is True
-            assert expected['_id'] == result['_id']
-            assert expected['text'] == result['text']
-            assert expected['author'] == result['author']
-            assert expected['date_of_creation'] == \
-                result['date_of_creation']
+    def test_update(self):
+        post = Post('text_update', 'author_update', datetime.now())
+        document = {
+            "text": post.text,
+            "author": post.author,
+            "date_of_creation": post.date_of_creation
+        }
+        self.repository.update(post)
+        self.coll.update_one.assert_called_once_with(
+            {'_id': post.id},
+            {'$set': document}
+        )
+        
+    def test_delete(self):
+        post_id = ObjectId()
+        self.repository.delete(post_id)
+        self.coll.delete_one.assert_called_once_with({'_id': post_id})
 
-# --- get_by_id TESTS <<END>> --- #
+    def test_create(self):
+        post = Post('text', 'author', datetime.now())
+        document = {
+            'text': post.text,
+            'author': post.author,
+            'date_of_creation': post.date_of_creation
+        }
+        self.repository.create(post)
+        self.coll.insert_one.assert_called_once_with(document)
