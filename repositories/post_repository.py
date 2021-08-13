@@ -1,3 +1,5 @@
+from datetime import datetime
+from time import strftime
 from translators.post_tranlator import PostTranslator
 from typing import Any
 from pymongo import MongoClient
@@ -41,10 +43,13 @@ class PostRepository(Repository):
         self.collection.delete_one({'_id': ObjectId(post_id)})
         return True
 
-    def create(self, text: str, author: str) -> str:
-        post = Post(text=text, author=author)
-        created_id = self.collection.insert_one(post.to_json()).inserted_id
-        return str(created_id)
+    def create(self, text: str, author: str) -> ObjectId:
+        if not isinstance(text, str) or not isinstance(author, str):
+            return None
+        post = Post(text=text, author=author, date_of_creation=datetime.now())
+        created_id = self.collection.insert_one(
+                self.translator.to_document(post)).inserted_id
+        return created_id 
 
     def update(self, post_id: str, text: str, author: str):
         self.collection.update_one({'_id': ObjectId(post_id)},
