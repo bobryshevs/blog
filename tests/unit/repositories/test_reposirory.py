@@ -19,6 +19,15 @@ class TestPostRepository:
     def teardown(self):
         pass
 
+    def test_get_page(self):
+        page = 1
+        page_size = 2
+        skip_arg = 0
+        self.coll.find = MagicMock()
+        self.repository.get_page(page, page_size)
+        
+        # Todo: finish it
+
     def test_get_by_id_without_post(self):
         post_id = ObjectId()
         self.coll.find_one.return_value = None
@@ -27,7 +36,6 @@ class TestPostRepository:
 
         assert result is None
         self.coll.find_one.assert_called_once_with({'_id': post_id})
-
 
     def test_get_by_id_exists_post(self):
         post_id = ObjectId()
@@ -52,7 +60,6 @@ class TestPostRepository:
         assert result.date_of_creation == post.date_of_creation
         self.coll.find_one.assert_called_once_with({'_id': post_id})
 
-
     def test_update(self):
         post = Post('text_update', 'author_update', datetime.now())
         document = {
@@ -65,7 +72,7 @@ class TestPostRepository:
             {'_id': post.id},
             {'$set': document}
         )
-        
+
     def test_delete(self):
         post_id = ObjectId()
         self.repository.delete(post_id)

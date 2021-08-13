@@ -12,9 +12,9 @@ class PostRepository(Repository):
         self.coll = client.blog_database.posts
 
     def get_page(self, page: int, page_size: int) -> list[Post]:
-        posts = list(self.coll.find().sort('_id', -1)
-                     .skip(page * page_size - page_size)
-                     .limit(page_size))
+        posts = self.coll.find().sort('_id', -1) \
+                     .skip(page * page_size - page_size) \
+                     .limit(page_size)
         posts = [
             self.translator.from_document(post)
             for post in posts
