@@ -2,6 +2,7 @@ from repositories.post_repository import PostRepository
 from datetime import datetime
 from bson.objectid import ObjectId
 from translators import PostTranslator
+from models import Post
 from mock import (
     Mock,
     MagicMock
@@ -13,7 +14,7 @@ class TestPostRepository:
         self.repository = PostRepository(
             client=Mock(),
             translator=PostTranslator())
-        self.col = self.repository.collection
+        self.coll = self.repository.coll
 
     def teardown(self):
         pass
@@ -23,6 +24,7 @@ class TestPostRepository:
 
 
 # --- create TESTS <<START>> --- #
+
 
     def test_create_invalid_text(self):
         '''
@@ -53,43 +55,34 @@ class TestPostRepository:
         '''
             The post is being created successfully 
         '''
-        valid_data = [
-            {
-                "id": ObjectId(),
-                "text": '',
-                "author": ''
-            },
-            {
-                "id": ObjectId(),
-                "text": 'abc',
-                "author": 'auth'
-            },
-            {
-                "id": ObjectId(),
-                "text": 'very_long_text'*100,
-                "author": 'very_long_fullname'*100
-            }
+        valid_posts = [
+            Post(
+                text='',
+                author='',
+                date_of_creation=datetime.now(),
+                m_id=ObjectId()),
+            Post(
+                text='very_long_t' * 100,
+                author='very_long_a' * 100,
+                date_of_creation=datetime.now(),
+                m_id=ObjectId()),
         ]
-        expected = [data['id'] for data in valid_data]
+        self.coll.update_one.return_value = True
 
-        for i, data in enumerate(valid_data):
-            self.col.insert_one().inserted_id = expected[i]
-            result = self.repository.create(data['text'], data['author'])
-
-            assert isinstance(result, ObjectId)
-            assert expected[i] == result
-
+        # for post in valid_posts:
+            
 # --- create TESTS <<END>> --- #
 
 
-# --- delete_by_id TESTS <<START>> --- #
+# --- delete TESTS <<START>> --- #
 
-    def test_delete_by_id_post_doesnt_exists(self):
+
+    def test_delete_post_doesnt_exists(self):
         '''
             There is no such post in the database,
             but the objId is valid
         '''
-        expected = False
+        expected = None
         self.col.find_one.return_value = None
 
         valid_id_list = [
@@ -99,35 +92,32 @@ class TestPostRepository:
         ]
 
         for valid_id in valid_id_list:
-            result = self.repository.delete_by_id(valid_id)
-
-            assert isinstance(result, bool)
+            result = self.repository.delete(valid_id)
+            assert result is None
             assert expected == result
 
-
-    def test_delete_by_id_invalid_objId(self):
+    def test_delete_invalid_objId(self):
         '''
             There is no such post in the database,
             since an invalid objId was passed.
         '''
-        expected = False
+        expected = None
 
         self.col.find_one.return_value = None
         invalid_id_list = ['', '123', 123, 1.2, [], (), {}]
 
         for invalid_id in invalid_id_list:
-            result = self.repository.delete_by_id(invalid_id)
+            result = self.repository.delete(invalid_id)
 
-            assert isinstance(result, bool)
+            assert result is None
             assert expected == result
 
-
-    def test_delete_by_id_post_exists(self):
+    def test_delete_post_exists(self):
         '''
             There is a post in the database.
             The ObjectId passed to the function is valid. 
         '''
-        expected = True
+        expected = None
 
         documents = [{
             "_id": ObjectId("6111371a6e34b54502afbf3d"),
@@ -136,19 +126,21 @@ class TestPostRepository:
             "date_of_creation": datetime(2021, 8, 9, 17, 11, 37, 200000)
 
         }]
+        id_for_delete = [doc['_id'] for doc in documents]
         self.col.find_one = MagicMock(side_effect=documents)
         self.col.delete_one.return_value = True
 
-        for _ in range(len(documents)):
-            result = self.repository.delete_by_id(ObjectId())
-            assert isinstance(result, bool)
+        for i in range(len(documents)):
+            result = self.repository.delete(id_for_delete[i])
+            assert result is None
             assert expected == result
 
 
-# --- delete_by_id TESTS <<END>> --- #
+# --- delete TESTS <<END>> --- #
 
 
 # --- get_by_id TESTS <<START>> --- #
+
 
     def test_get_by_id_with_ivalid_objId(self):
         '''
@@ -171,7 +163,7 @@ class TestPostRepository:
         '''
 
         expected = None
-        self.repository.collection.find_one.return_value = None
+        self.repository.coll.find_one.return_value = None
 
         result = self.repository.get_by_id(post_id=ObjectId())
 
@@ -198,11 +190,11 @@ class TestPostRepository:
                 "date_of_creation": datetime(2021, 8, 9, 16, 10, 37, 200000)
             }]
 
-        col = self.repository.collection
-        col.find_one = MagicMock(side_effect=documents)
+        coll = self.repository.coll
+        coll.find_one = MagicMock(side_effect=documents)
 
         for expected in documents:
-            result = self.repository.collection.find_one({ObjectId()})
+            result = self.repository.coll.find_one({ObjectId()})
 
             assert isinstance(result, dict) is True
             assert expected['_id'] == result['_id']
