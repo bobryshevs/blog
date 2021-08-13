@@ -38,7 +38,7 @@ class PostRepository(Repository):
     def update(self, post: Post) -> Post:
         self.coll.update_one(
             {'_id': post.id},
-            {"$set": {self.translator.to_document(post)}})
+            {"$set": self.translator.to_document(post)})
 
     def exists(self, post_id: ObjectId) -> bool:
         return self.get_by_id(post_id) is not None
