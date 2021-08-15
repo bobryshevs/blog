@@ -1,12 +1,17 @@
 from flask import Blueprint, request, Response, jsonify
-from structure import post_repository
-from structure import post_presenter
+from structure import (
+    post_repository,
+    post_presenter,
+    post_validator,
+    post_service
+)
 
 
 post = Blueprint('post', __name__)
 
+
 @post.route('/pagination')
-def get_post_pages():
+def get_post_page():
     page_number = request.args.get('page_number', type=int)
     page_size = request.args.get('page_size', type=int)
     posts = post_repository.get_pages(page_number, page_size)
@@ -17,11 +22,10 @@ def get_post_pages():
 def get_multiple_posts_by_IDs():
     IDs = request.args.values()
     posts = [
-        post_repository.get_by_id(post_id) 
+        post_repository.get_by_id(post_id)
         for post_id in IDs
     ]
     return jsonify(posts)
-
 
 
 @post.route('/<post_id>', methods=['GET'])
@@ -55,6 +59,6 @@ def create_post():
 def update_post(post_id: str):
     fields = request.json
     post_repository.update(post_id=post_id,
-                            text=fields['text'],
-                            author=fields['author'])
+                           text=fields['text'],
+                           author=fields['author'])
     return '', 204

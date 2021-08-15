@@ -1,8 +1,8 @@
-from models.post import Post
-from datetime import datetime
+from models import Post
+from .translator import Translator
 
 
-class PostTranslator:
+class PostTranslator(Translator):
 
     def to_document(self, post: Post) -> dict:
         return {

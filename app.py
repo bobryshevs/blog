@@ -8,7 +8,6 @@ from db_worker import FMongoDb
 from blueprints import post, comment
 
 
-
 # Constants
 
 
@@ -17,8 +16,6 @@ app.config['SECRET_KEY'] = "SECRET"
 
 app.register_blueprint(post, url_prefix='/post')
 app.register_blueprint(comment, url_prefix='/comment')
-
-
 
 
 @app.route('/')

@@ -10,3 +10,4 @@ class PostPresenter:
             "date_of_creation": post.date_of_creation,
             "_id": post.id
         }
+    
