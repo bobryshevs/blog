@@ -2,9 +2,15 @@ from datetime import datetime
 
 from datetime import datetime
 
+from bson.objectid import ObjectId
+
 
 class Post:
-    def __init__(self, text: str, author: str, date_of_creation: datetime, m_id=None):
+    def __init__(self,
+                 text: str,
+                 author: str,
+                 date_of_creation: datetime = None,
+                 m_id=None):
         self.id = m_id
         self.text: str = text
         self.author: str = author

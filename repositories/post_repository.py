@@ -13,8 +13,8 @@ class PostRepository(Repository):
 
     def get_page(self, page: int, page_size: int) -> list[Post]:
         posts = self.coll.find().sort('_id', -1) \
-                     .skip(page * page_size - page_size) \
-                     .limit(page_size)
+            .skip(page * page_size - page_size) \
+            .limit(page_size)
         posts = [
             self.translator.from_document(post)
             for post in posts
@@ -39,6 +39,7 @@ class PostRepository(Repository):
         self.coll.update_one(
             {'_id': post.id},
             {"$set": self.translator.to_document(post)})
+        return post
 
     def exists(self, post_id: ObjectId) -> bool:
         return self.get_by_id(post_id) is not None

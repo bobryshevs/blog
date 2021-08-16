@@ -26,4 +26,4 @@ post_validator = PostValidator()
 
 
 # --- Services --- #
-post_service = PostService() 
+post_service = PostService(post_repository, post_presenter) 

@@ -8,6 +8,5 @@ class PostPresenter:
             "text": post.text,
             "author": post.author,
             "date_of_creation": post.date_of_creation,
-            "_id": post.id
+            "_id": str(post.id)
         }
-    
