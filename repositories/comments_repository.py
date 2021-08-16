@@ -1,23 +1,32 @@
+from translators import CommentTranslator, comment_translator
 from pymongo.mongo_client import MongoClient
 from bson import ObjectId
-from repositories.repository import Repository
+from repositories.repository import MongoRepository
+from models import Comment
 
 
-class CommentRepository(Repository):
-    def __init__(self, client: MongoClient) -> None:
-        self.client = client
-        self.db = client.blog_database
-        self.collection = client.blog_database.comments
+class CommentRepository(MongoRepository):
+    def __init__(self, translator, collection):
+        super().__init__(translator, collection)
 
-    def get_by_id(self, comment_id: str):
-        obj_comment_id = ObjectId(comment_id)
-        comment = self.collection.find_one({'_id': obj_comment_id})
-        self.change_element_objID_to_str(comment)
-        return comment
+    # def create(self, comment: Comment) -> ObjectId:
+    #     return self.coll.insert_one(self.translator.to_document(comment)) \
+    #         .inserted_id
 
-    def get_comment_pages(self, page_size: int, page_number: int) -> list:
-        comments = list(self.collection.find().sort('_id', -1)
-                        .skip(page_number*page_size-page_size)
-                        .limit(page_size))
-        self.change_list_elements_objID_to_str(comments)
-        return comments
+    # def get_by_id(self, comment_id: ObjectId) -> Comment:
+    #     comment = self.coll.find_one({"_id": comment_id})
+    #     if not comment:
+    #         return None
+    #     return self.translator.from_document(comment)
+
+    # def update(self, comment: Comment) -> Comment:
+    #     self.coll.update_one(
+    #         {"_id": comment.id},
+    #         {"$set": self.translator.to_document(comment)})
+    #     return comment
+
+    # def delete(self, comment_id) -> None:
+    #     self.coll.delete_one({'_id': comment_id})
+
+    # def exists(self, comment_id: ObjectId) -> bool:
+    #     return self.get_by_id(comment_id) is not None

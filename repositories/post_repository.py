@@ -1,18 +1,16 @@
 from translators.post_tranlator import PostTranslator
 from pymongo import MongoClient
 from bson import ObjectId
-from repositories.repository import Repository
+from repositories.repository import MongoRepository
 from models import Post
 
 
-class PostRepository(Repository):
-    def __init__(self, client: MongoClient, translator: PostTranslator):
-        super().__init__(translator)
-        self.client = client
-        self.coll = client.blog_database.posts
+class PostRepository(MongoRepository):
+    def __init__(self, translator, collection):
+        super().__init__(translator, collection)
 
     def get_page(self, page: int, page_size: int) -> list[Post]:
-        posts = self.coll.find().sort('_id', -1) \
+        posts = self.collection.find().sort('_id', -1) \
             .skip(page * page_size - page_size) \
             .limit(page_size)
         posts = [
@@ -22,24 +20,24 @@ class PostRepository(Repository):
         ]
         return posts
 
-    def get_by_id(self, post_id: ObjectId) -> Post:
-        post = self.coll.find_one({"_id": post_id})
-        if not post:
-            return None
-        return self.translator.from_document(post)
+    # def get_by_id(self, post_id: ObjectId) -> Post:
+    #     post = self.coll.find_one({"_id": post_id})
+    #     if not post:
+    #         return None
+    #     return self.translator.from_document(post)
 
-    def delete(self, post_id: ObjectId) -> None:
-        self.coll.delete_one({'_id': post_id})
+    # def delete(self, post_id: ObjectId) -> None:
+    #     self.coll.delete_one({'_id': post_id})
 
-    def create(self, post: Post) -> ObjectId:
-        return self.coll.insert_one(self.translator.to_document(post)) \
-            .inserted_id
+    # def create(self, post: Post) -> ObjectId:
+    #     return self.coll.insert_one(self.translator.to_document(post)) \
+    #         .inserted_id
 
-    def update(self, post: Post) -> Post:
-        self.coll.update_one(
-            {'_id': post.id},
-            {"$set": self.translator.to_document(post)})
-        return post
+    # def update(self, post: Post) -> Post:
+    #     self.coll.update_one(
+    #         {'_id': post.id},
+    #         {"$set": self.translator.to_document(post)})
+    #     return post
 
-    def exists(self, post_id: ObjectId) -> bool:
-        return self.get_by_id(post_id) is not None
+    # def exists(self, post_id: ObjectId) -> bool:
+    #     return self.get_by_id(post_id) is not None
