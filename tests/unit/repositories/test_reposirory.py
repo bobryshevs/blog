@@ -12,9 +12,9 @@ from mock import (
 class TestPostRepository:
     def setup(self):
         self.repository = PostRepository(
-            client=Mock(),
+            collection=Mock(),
             translator=PostTranslator())
-        self.coll = self.repository.coll
+        self.collection = self.repository.collection
 
     def teardown(self):
         pass
@@ -22,20 +22,19 @@ class TestPostRepository:
     def test_get_page(self):
         page = 1
         page_size = 2
-        skip_arg = 0
-        self.coll.find = MagicMock()
+        self.collection.find = MagicMock()
         self.repository.get_page(page, page_size)
         
         # Todo: finish it
 
     def test_get_by_id_without_post(self):
         post_id = ObjectId()
-        self.coll.find_one.return_value = None
+        self.collection.find_one.return_value = None
 
         result = self.repository.get_by_id(post_id)
 
         assert result is None
-        self.coll.find_one.assert_called_once_with({'_id': post_id})
+        self.collection.find_one.assert_called_once_with({'_id': post_id})
 
     def test_get_by_id_exists_post(self):
         post_id = ObjectId()
@@ -51,14 +50,14 @@ class TestPostRepository:
             'date_of_creation': post.date_of_creation,
             '_id': post.id
         }
-        self.coll.find_one.return_value = document
+        self.collection.find_one.return_value = document
 
         result = self.repository.get_by_id(post_id)
         assert result.id == post.id
         assert result.text == post.text
         assert result.author == post.author
         assert result.date_of_creation == post.date_of_creation
-        self.coll.find_one.assert_called_once_with({'_id': post_id})
+        self.collection.find_one.assert_called_once_with({'_id': post_id})
 
     def test_update(self):
         post = Post('text_update', 'author_update', datetime.now())
@@ -68,7 +67,7 @@ class TestPostRepository:
             "date_of_creation": post.date_of_creation
         }
         self.repository.update(post)
-        self.coll.update_one.assert_called_once_with(
+        self.collection.update_one.assert_called_once_with(
             {'_id': post.id},
             {'$set': document}
         )
@@ -76,7 +75,7 @@ class TestPostRepository:
     def test_delete(self):
         post_id = ObjectId()
         self.repository.delete(post_id)
-        self.coll.delete_one.assert_called_once_with({'_id': post_id})
+        self.collection.delete_one.assert_called_once_with({'_id': post_id})
 
     def test_create(self):
         post = Post('text', 'author', datetime.now())
@@ -86,4 +85,4 @@ class TestPostRepository:
             'date_of_creation': post.date_of_creation
         }
         self.repository.create(post)
-        self.coll.insert_one.assert_called_once_with(document)
+        self.collection.insert_one.assert_called_once_with(document)

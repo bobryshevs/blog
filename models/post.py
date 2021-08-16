@@ -1,8 +1,6 @@
 from datetime import datetime
-
-from datetime import datetime
-
 from bson.objectid import ObjectId
+from .model import Model
 
 
 class Post:
@@ -10,7 +8,7 @@ class Post:
                  text: str,
                  author: str,
                  date_of_creation: datetime = None,
-                 m_id=None):
+                 m_id: ObjectId = None):
         self.id = m_id
         self.text: str = text
         self.author: str = author
