@@ -1,11 +1,16 @@
 from exceptions.not_found import NotFound
 from exceptions.bad_request import BadRequest
-from flask import Blueprint, request, Response, jsonify
+from flask import (
+    Blueprint,
+    request,
+    jsonify,
+    make_response
+)
 from structure import (
     post_presenter,
     post_service
 )
-
+import json
 
 post = Blueprint('post', __name__)
 
@@ -30,14 +35,10 @@ def get_post_page():
 def get_post_by_id(post_id: str):
     try:
         post = post_service.get_by_id(post_id)
-        post_json = post_presenter.to_json(post)
-        return post_json, 200
-
-    except BadRequest as err:
-        return str(err), 400
-
     except NotFound as err:
         return str(err), 404
+
+    return post_presenter.to_json(post), 200
 
 
 @post.route('/<post_id>', methods=["DELETE"])
@@ -45,34 +46,31 @@ def delete_post_by_id(post_id: str):
     try:
         post_service.delete(post_id)
         return '', 204
-    except BadRequest as err:
-        return str(err), 400
     except NotFound as err:
         return str(err), 404
 
 
 @post.route('/', methods=['POST'])
 def create_post():
+    fields = request.json
     try:
-        response = Response()
-        fields = request.json
-        post_id = post_service.create(fields['text'], fields['author'])
-        response.headers['Location'] = f'/post/{post_id}'
-        return response, 201
+        post = post_service.create(fields['text'], fields['author'])
     except BadRequest as err:
         return str(err), 400
-    except NotFound as err:
-        return str(err), 404
+    response = make_response(post_presenter.to_json(post))
+    response.headers['Location'] = f'/post/{post.id}'
+    response.status_code = 201
+    return response
 
 
 @post.route('/<post_id>', methods=['PUT'])
 def update_post(post_id: str):
+    fields = request.json
     try:
-        fields = request.json
         upd_post = post_service.update(post_id,
                                        fields['text'],
                                        fields['author'])
-        return post_presenter.to_json(upd_post), 204
+        return post_presenter.to_json(upd_post), 200
     except BadRequest as err:
         return str(err), 400
     except NotFound as err:
