@@ -8,9 +8,8 @@ from bson import ObjectId
 
 class PostService:
 
-    def __init__(self, repository: PostRepository, presenter) -> None:
+    def __init__(self, repository: PostRepository) -> None:
         self.repository = repository
-        self.presenter = presenter
 
     def get_page(self, page: int, page_size: int) -> list[Post]:
         if not isinstance(page, int) \

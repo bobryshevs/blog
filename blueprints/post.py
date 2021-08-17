@@ -1,5 +1,7 @@
-from exceptions.not_found import NotFound
-from exceptions.bad_request import BadRequest
+from exceptions import (
+    NotFound,
+    BadRequest
+)
 from flask import (
     Blueprint,
     request,

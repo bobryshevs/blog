@@ -7,8 +7,8 @@ class Comment(Model):
     def __init__(self,
                  text: str,
                  author: str,
-                 post_id: ObjectId, 
-                 date_of_creation: datetime,
+                 post_id: ObjectId,
+                 date_of_creation: datetime = None,
                  m_id: ObjectId = None
                  ):
         self.id = m_id

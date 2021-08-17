@@ -1,8 +1,9 @@
+from services.comment_service import CommentService
 from models.post import Post
 from pymongo import MongoClient
 from repositories import PostRepository, CommentRepository
 from translators import PostTranslator, CommentTranslator
-from presenters import PostPresenter
+from presenters import PostPresenter, CommentPresenter
 from services import PostService
 
 MONGO_HOST = "localhost"
@@ -22,7 +23,8 @@ comment_repository = CommentRepository(
 
 # --- Presenters --- #
 post_presenter = PostPresenter()
-
+comment_presenter = CommentPresenter()
 
 # --- Services --- #
-post_service = PostService(post_repository, post_presenter)
+post_service = PostService(post_repository)
+comment_service = CommentService(comment_repository, post_repository)

@@ -1,4 +1,4 @@
-from models.post import Post
+from models import Post
 
 
 class PostPresenter:
