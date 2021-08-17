@@ -25,25 +25,3 @@ class CommentRepository(MongoRepository):
         com = self.collection.find_one({"post_id": post_id,
                                         "_id": comment_id})
         return com is not None
-        
-        # def create(self, comment: Comment) -> ObjectId:
-        #     return self.coll.insert_one(self.translator.to_document(comment)) \
-        #         .inserted_id
-
-        # def get_by_id(self, comment_id: ObjectId) -> Comment:
-        #     comment = self.coll.find_one({"_id": comment_id})
-        #     if not comment:
-        #         return None
-        #     return self.translator.from_document(comment)
-
-        # def update(self, comment: Comment) -> Comment:
-        #     self.coll.update_one(
-        #         {"_id": comment.id},
-        #         {"$set": self.translator.to_document(comment)})
-        #     return comment
-
-        # def delete(self, comment_id) -> None:
-        #     self.coll.delete_one({'_id': comment_id})
-
-        # def exists(self, comment_id: ObjectId) -> bool:
-        #     return self.get_by_id(comment_id) is not None

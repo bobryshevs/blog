@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from repositories import PostRepository
 from models import Post
 from bson import ObjectId
+from validators import GetPageValidator
 
 
 class PostService:
@@ -11,13 +12,12 @@ class PostService:
     def __init__(self, repository: PostRepository) -> None:
         self.repository = repository
 
-    def get_page(self, page: int, page_size: int) -> list[Post]:
-        if not isinstance(page, int) \
-                or not isinstance(page_size, int) \
-                or page < 1 \
-                or page_size < 1:
-            raise BadRequest
-        return self.repository.get_page(page, page_size)
+    def get_page(self, args: dict) -> list[Post]:
+        GetPageValidator.validate(args)
+        return self.repository.get_page(
+            int(args.get('page')),
+            int(args.get('page_size'))
+        )
 
     def get_by_id(self, post_id: str) -> Post:
         if not ObjectId.is_valid(post_id):
