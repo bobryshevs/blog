@@ -1,4 +1,2 @@
-from .post_service.get_page_validator import GetPageValidator
-from .post_service.get_by_id_validator import GetByIdValidator
-from .post_service.delete_validator import DeleteValidator
-from .post_service.create_validator import CreateValidator
+from .presence_str_validator import PresenceStrValidator
+from .validator import Validator

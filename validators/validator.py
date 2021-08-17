@@ -1,17 +1,10 @@
 class Validator:
+    VALID = 1
+    INVALID_TYPE_CODE = 2
+    INVALID_VALUE_CODE = 3
 
-    @staticmethod
-    def to_int(arg: any):
-        try:
-            return int(arg)
-        except ValueError:
-            return None
+    def __init__(self, key: str, exceptions: dict) -> None:
+        self.key = key
 
-    @staticmethod
-    def validate_non_negative_int(value: any) -> None:
-        value = Validator.to_int(value)
-        if value is None:
-            raise TypeError()
-
-        if value < 1:
-            raise ValueError()
+    def validate(self, args: dict):
+        raise NotImplementedError()
