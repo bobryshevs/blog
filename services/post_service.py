@@ -4,7 +4,12 @@ from bson.objectid import ObjectId
 from repositories import PostRepository
 from models import Post
 from bson import ObjectId
-from validators import GetPageValidator
+from validators import (
+    GetPageValidator,
+    GetByIdValidator,
+    DeleteValidator,
+    CreateValidator
+)
 
 
 class PostService:
@@ -19,35 +24,20 @@ class PostService:
             int(args.get('page_size'))
         )
 
-    def get_by_id(self, post_id: str) -> Post:
-        if not ObjectId.is_valid(post_id):
-            raise NotFound()
+    def get_by_id(self, args: dict) -> Post:
+        GetByIdValidator.validate(args, self.repository)
+        return self.repository.get_by_id(ObjectId(args['post_id']))
 
-        post = self.repository.get_by_id(ObjectId(post_id))
-        if post is None:
-            raise NotFound()
+    def delete(self, args: dict) -> None:
+        DeleteValidator.validate(args, self.repository)
+        self.repository.delete(ObjectId(args.get('post_id')))
+        return None
 
-        return post
-
-    def delete(self, post_id: str) -> None:
-        if not ObjectId.is_valid(post_id):
-            raise NotFound()
-
-        post_id = ObjectId(post_id)
-
-        if not self.repository.exists(post_id):
-            raise NotFound()
-
-        self.repository.delete(post_id)
-        return
-
-    def create(self, text: str, author: str) -> Post:
-        if not isinstance(text, str) or not isinstance(author, str):
-            raise BadRequest
-
+    def create(self, args: dict) -> Post:
+        CreateValidator.validate(args)
         post = Post(
-            text=text,
-            author=author,
+            text=args.get('text'),
+            author=args.get('author'),
             date_of_creation=datetime.now()
         )
         post.id = self.repository.create(post)

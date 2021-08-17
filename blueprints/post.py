@@ -33,7 +33,7 @@ def get_post_page():
 @post.route('/<post_id>', methods=['GET'])
 def get_post_by_id(post_id: str):
     try:
-        post = post_service.get_by_id(post_id)
+        post = post_service.get_by_id({'post_id': post_id})
     except NotFound as err:
         return str(err), 404
 
@@ -43,7 +43,7 @@ def get_post_by_id(post_id: str):
 @post.route('/<post_id>', methods=["DELETE"])
 def delete_post_by_id(post_id: str):
     try:
-        post_service.delete(post_id)
+        post_service.delete({'post_id': post_id})
         return '', 204
     except NotFound as err:
         return str(err), 404
@@ -53,7 +53,7 @@ def delete_post_by_id(post_id: str):
 def create_post():
     fields = request.json
     try:
-        post = post_service.create(fields['text'], fields['author'])
+        post = post_service.create(fields)
     except BadRequest as err:
         return str(err), 400
     response = make_response(post_presenter.to_json(post))

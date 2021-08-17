@@ -6,6 +6,10 @@ class GetPageValidator(Validator):
 
     @staticmethod
     def validate(args: dict) -> None:
+        '''
+            Checking whether the arguments "page", "page_size" 
+            are non-negative integers
+        '''
         try:
             GetPageValidator.validate_non_negative_int(args.get('page'))
             GetPageValidator.validate_non_negative_int(args.get('page_size'))
