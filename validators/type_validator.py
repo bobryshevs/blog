@@ -1,4 +1,3 @@
-from validators.validator import Validator
 
 
 class TypeValidator:
@@ -12,3 +11,4 @@ class TypeValidator:
             # значения, чтобы потом использовать его как помощь при
             # формировании сообщения об ошибке
             return False
+        return True

@@ -1,4 +1,4 @@
-class ExistenceValidator:
+class PresenceValidator:
     def __init__(self, key: str) -> None:
         self.key = key
 
@@ -9,7 +9,7 @@ class ExistenceValidator:
         if self.key not in args:
             return False
 
-        if not args.get(self.key):
+        if args.get(self.key) is None:
             return False
 
         return True

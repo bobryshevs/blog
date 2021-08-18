@@ -1,4 +1,4 @@
-from validators.base_validators import (
+from validators import (
     ExistenceValidator,
     TypeValidator,
     ContentValidator
