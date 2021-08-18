@@ -1,15 +1,13 @@
-from validators import Validator
-import validators
+from exceptions import BadRequest
 
 
 class ValidateService:
-    def __init__(self, validators: list[Validator]) -> None:
+    def __init__(self, validators: list) -> None:
         self.validators = validators
-        self.errors_dict = {
-            # error_type (str or int): exception
-        }
 
     def validate(self, args: dict) -> bool:
         for validator in self.validators:
-            if not validator.validate(args):
-                
+            if validator.valid(args):
+                continue
+            raise BadRequest()  # Change to error_dict
+        return True

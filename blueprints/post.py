@@ -8,6 +8,7 @@ from flask import (
     jsonify,
     make_response
 )
+import exceptions
 from structure import (
     post_presenter,
     post_service
@@ -36,6 +37,8 @@ def get_post_by_id(post_id: str):
         post = post_service.get_by_id({'post_id': post_id})
     except NotFound as err:
         return str(err), 404
+    except BadRequest as err:
+        return str(err), 404  # Must be 400
 
     return post_presenter.to_json(post), 200
 

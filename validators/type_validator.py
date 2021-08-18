@@ -1,9 +1,9 @@
 
 
 class TypeValidator:
-    def __init__(self, key: str, value_type: type) -> None:
+    def __init__(self, key: str, type_: type) -> None:
         self.key = key
-        self.value_type = value_type
+        self.value_type = type_
 
     def valid(self, args: dict) -> bool:
         if not isinstance(args.get(self.key), self.value_type):
