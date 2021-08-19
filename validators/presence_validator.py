@@ -1,6 +1,7 @@
-class PresenceValidator:
-    def __init__(self, key: str) -> None:
-        self.key = key
+from .base_validator import BaseValidator
+
+
+class PresenceValidator(BaseValidator):
 
     def valid(self, args: dict) -> bool:
         if not isinstance(args, dict):

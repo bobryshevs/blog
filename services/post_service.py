@@ -13,15 +13,15 @@ class PostService:
                  repository: PostRepository,
                  get_page_validate_service,
                  create_validate_service,
-                 get_by_id_validate_service,
+                 object_id_validate_service,
                  update_validate_service,
-                 delete_validate_service) -> None:
+                 ) -> None:
         self.repository = repository
         self.get_page_validate_service = get_page_validate_service
         self.create_validate_service = create_validate_service
-        self.get_by_id_validate_service = get_by_id_validate_service
+        self.get_by_id_validate_service = object_id_validate_service
         self.update_validate_service = update_validate_service
-        self.delte_validate_service = delete_validate_service
+        self.delete_validate_service = object_id_validate_service
 
     def get_page(self, args: dict) -> list[Post]:
         self.get_page_validate_service.validate(args)
@@ -50,7 +50,7 @@ class PostService:
                 "post_id": str -> ObjectId
             }
         """
-        self.delte_validate_service.validate(args)
+        self.delete_validate_service.validate(args)
         if not self.repository.exists(ObjectId(args.get('post_id'))):
             raise NotFound()
         self.repository.delete(ObjectId(args.get('post_id')))

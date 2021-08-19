@@ -1,5 +1,4 @@
 from validators import TypeValidator
-import validators
 
 
 class TestTypeValidator:

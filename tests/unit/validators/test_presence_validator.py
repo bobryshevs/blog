@@ -1,5 +1,4 @@
 from validators import PresenceValidator
-import validators
 
 
 class TestPresenceValidator:

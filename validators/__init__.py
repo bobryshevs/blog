@@ -1,9 +1,9 @@
-from .content_validator import ContentValidator
 from .presence_validator import PresenceValidator
 from .type_validator import TypeValidator
 
 
-from .content_validators.content_non_zero_str_validator import ContentNonZeroStrValidator
-from .content_validators.content_object_id_validator import ContentObjectIdValidator
-from .content_validators.content_int_representable_validator import ContentIntRepresentableValidator
-from .content_validators.content_positive_int_validator import ContentPositiveIntValidator
+from .non_zero_str_validator import NonZeroStrValidator
+from .object_id_validator import ObjectIdValidator
+from .int_representable_validator import IntRepresentableValidator
+from .positive_int_validator import PositiveIntValidator
+from .str_len_validator import StrLenValidator

@@ -1,18 +1,29 @@
-from typing import Type
 from services.comment_service import CommentService
-from models.post import Post
 from pymongo import MongoClient
-from repositories import PostRepository, CommentRepository
-from translators import PostTranslator, CommentTranslator
-from presenters import PostPresenter, CommentPresenter
-from services import PostService, ValidateService
+from repositories import (
+    PostRepository,
+    CommentRepository
+)
+from translators import (
+    PostTranslator,
+    CommentTranslator
+)
+from presenters import (
+    PostPresenter,
+    CommentPresenter
+)
+from services import (
+    PostService,
+    ValidateService
+)
 from validators import (
     PresenceValidator,
     TypeValidator,
-    ContentNonZeroStrValidator,
-    ContentObjectIdValidator,
-    ContentPositiveIntValidator,
-    ContentIntRepresentableValidator
+    NonZeroStrValidator,
+    ObjectIdValidator,
+    PositiveIntValidator,
+    IntRepresentableValidator,
+    StrLenValidator
 )
 MONGO_HOST = "localhost"
 MONGO_PORT = 27017
@@ -36,36 +47,36 @@ comment_presenter = CommentPresenter()
 # --- Validarots --- #
 
 # // post_get_page \\ #
-post_get_page_presence_page = PresenceValidator(key='page')
-post_get_page_presence_page_size = PresenceValidator(key='page_size')
+presence_page_validator = PresenceValidator(key='page')
+presence_page_size_vaidator = PresenceValidator(key='page_size')
 
-post_get_page_type_page = TypeValidator(key='page', type_=str)
-post_get_page_type_page_size = TypeValidator(key='page_size', type_=str)
+type_page_validator = TypeValidator(key='page', type_=str)
+type_page_size_validator = TypeValidator(key='page_size', type_=str)
 
-post_get_page_content_int_representable_page = ContentIntRepresentableValidator(
+int_representable_page_validator = IntRepresentableValidator(
     key='page')
-post_get_page_content_int_representable_page_size = ContentIntRepresentableValidator(
+int_representable_page_size_validator = IntRepresentableValidator(
     'page_size')
-post_get_page_content_positive_int_page = ContentPositiveIntValidator('page')
-post_get_page_content_positive_int_page_size = ContentPositiveIntValidator(
+positive_int_page_validator = PositiveIntValidator('page')
+positive_int_page_size_validator = PositiveIntValidator(
     'page_size')
 
 # // post_create \\ #
-post_presence_text = PresenceValidator(key='text')
-post_presence_author = PresenceValidator(key='author')
+presence_text_validator = PresenceValidator(key='text')
+presence_author_validator = PresenceValidator(key='author')
 
-post_type_text = TypeValidator(key='text', type_=str)
-post_type_author = TypeValidator(key='author', type_=str)
+type_text_validator = TypeValidator(key='text', type_=str)
+type_author_validator = TypeValidator(key='author', type_=str)
 
-post_content_author = ContentNonZeroStrValidator(key='author')
+content_author_validator = NonZeroStrValidator(key='author')
 
 
 # // post_get_by_id \\ #
-post_presence_post_id = PresenceValidator(key='post_id')
+presence_id_validator = PresenceValidator(key='post_id')
 
-post_type_post_id = TypeValidator(key='post_id', type_=str)
+type_str_id_validator = TypeValidator(key='post_id', type_=str)
 
-post_content_post_id = ContentObjectIdValidator(key='post_id')
+object_id_validator = ObjectIdValidator(key='post_id')
 
 
 # // post_update \\ #
@@ -85,60 +96,52 @@ post_content_post_id = ContentObjectIdValidator(key='post_id')
 
 
 # --- Validator Services --- #
-post_get_page_validator_service = ValidateService(
+get_page_validate_service = ValidateService(
     [
-        post_get_page_presence_page,
-        post_get_page_presence_page_size,
-        post_get_page_type_page,
-        post_get_page_type_page_size,
-        post_get_page_content_int_representable_page,
-        post_get_page_content_int_representable_page_size,
-        post_get_page_content_positive_int_page,
-        post_get_page_content_positive_int_page_size
+        presence_page_validator,
+        presence_page_size_vaidator,
+        type_page_validator,
+        type_page_size_validator,
+        int_representable_page_validator,
+        int_representable_page_size_validator,
+        positive_int_page_validator,
+        positive_int_page_size_validator
     ]
 )
-post_create_validator_service = ValidateService(
+create_validate_service = ValidateService(
     [
-        post_presence_text,
-        post_presence_author,
-        post_type_text,
-        post_type_author,
-        post_content_author
+        presence_text_validator,
+        presence_author_validator,
+        type_text_validator,
+        type_author_validator,
+        content_author_validator
     ]
 )
-post_get_by_id_validator_service = ValidateService(
+object_id_validate_service = ValidateService(
     [
-        post_presence_post_id,
-        post_type_post_id,
-        post_content_post_id
+        presence_id_validator,
+        type_str_id_validator,
+        object_id_validator
     ]
 )
 post_update_validator_service = ValidateService(
     [
-        post_presence_post_id,
-        post_type_post_id,
-        post_content_post_id,
-        post_presence_text,
-        post_type_text,
-        post_presence_author,
-        post_type_author,
-        post_content_author
+        presence_id_validator,
+        type_str_id_validator,
+        object_id_validator,
+        presence_text_validator,
+        type_text_validator,
+        presence_author_validator,
+        type_author_validator,
+        content_author_validator
     ]
 )
 
-post_delete_validator_service = ValidateService(
-    # Copy of post_get_by_id_validator_service :(
-    [
-        post_presence_post_id,
-        post_type_post_id,
-        post_content_post_id
-    ]
-)
 # --- Services --- #
 post_service = PostService(post_repository,
-                           post_get_page_validator_service,
-                           post_create_validator_service,
-                           post_get_by_id_validator_service,
+                           get_page_validate_service,
+                           create_validate_service,
+                           object_id_validate_service,
                            post_update_validator_service,
-                           post_delete_validator_service)
+                           )
 comment_service = CommentService(comment_repository, post_repository)
