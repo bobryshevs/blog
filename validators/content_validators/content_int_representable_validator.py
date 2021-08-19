@@ -16,4 +16,3 @@ class ContentIntRepresentableValidator(ContentValidator):
             return True
         except (TypeError, ValueError):
             raise BadRequest()
-

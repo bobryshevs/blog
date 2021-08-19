@@ -13,11 +13,15 @@ class PostService:
                  repository: PostRepository,
                  get_page_validate_service,
                  create_validate_service,
-                 get_by_id_validate_service) -> None:
+                 get_by_id_validate_service,
+                 update_validate_service,
+                 delete_validate_service) -> None:
         self.repository = repository
         self.get_page_validate_service = get_page_validate_service
         self.create_validate_service = create_validate_service
         self.get_by_id_validate_service = get_by_id_validate_service
+        self.update_validate_service = update_validate_service
+        self.delte_validate_service = delete_validate_service
 
     def get_page(self, args: dict) -> list[Post]:
         self.get_page_validate_service.validate(args)
@@ -37,11 +41,18 @@ class PostService:
 
         if not self.repository.exists(post_id):
             raise NotFound
-        
+
         return self.repository.get_by_id(post_id)
 
     def delete(self, args: dict) -> None:
-        # DeleteValidator.validate(args, self.repository)
+        """
+            args: {
+                "post_id": str -> ObjectId
+            }
+        """
+        self.delte_validate_service.validate(args)
+        if not self.repository.exists(ObjectId(args.get('post_id'))):
+            raise NotFound()
         self.repository.delete(ObjectId(args.get('post_id')))
         return None
 
@@ -62,14 +73,23 @@ class PostService:
 
         return post
 
-    def update(self, post_id: str, text: str, author: str) -> Post:
-        # raise exception (BadRequest + NotFound)
-        self.check_valid_and_exists_id(post_id)
-        post_id = ObjectId(post_id)
-        post = self.repository.get_by_id(post_id)
+    def update(self, args: dict) -> Post:
+        """
+            args :{
+                "post_id": str -> ObjectId
+                "text": str
+                "author": str, len > 0
+            }
+        """
 
-        post.text = text
-        post.author = author
+        self.update_validate_service.validate(args)
+
+        if not self.repository.exists(ObjectId(args.get('post_id'))):
+            raise NotFound()
+
+        post = self.repository.get_by_id(ObjectId(args.get('post_id')))
+        post.text = args.get('text')
+        post.author = args.get('author')
 
         return self.repository.update(post)
 

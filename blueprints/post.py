@@ -1,3 +1,4 @@
+import re
 from exceptions import (
     NotFound,
     BadRequest
@@ -50,6 +51,8 @@ def delete_post_by_id(post_id: str):
         return '', 204
     except NotFound as err:
         return str(err), 404
+    except BadRequest as err:
+        return str(err), 404  # Must be 400
 
 
 @post.route('/', methods=['POST'])
@@ -67,11 +70,9 @@ def create_post():
 
 @post.route('/<post_id>', methods=['PUT'])
 def update_post(post_id: str):
-    fields = request.json
     try:
-        upd_post = post_service.update(post_id,
-                                       fields['text'],
-                                       fields['author'])
+        fields = request.json | {'post_id': post_id}
+        upd_post = post_service.update(fields)
         return post_presenter.to_json(upd_post), 200
     except BadRequest as err:
         return str(err), 400
