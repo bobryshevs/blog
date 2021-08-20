@@ -1,7 +1,8 @@
-from .base_validator import BaseValidator
 
 
-class IntRepresentableValidator(BaseValidator):
+class IntRepresentableValidator():
+    def __init__(self, key: str) -> None:
+        self.key = key
 
     def valid(self, args: dict) -> bool:
         try:

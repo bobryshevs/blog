@@ -1,8 +1,9 @@
 from bson import ObjectId
-from .base_validator import BaseValidator
 
 
-class ObjectIdValidator(BaseValidator):
+class ObjectIdValidator():
+    def __init__(self, key: str) -> None:
+        self.key = key
 
     def valid(self, args: dict) -> bool:
         return ObjectId.is_valid(args.get(self.key))

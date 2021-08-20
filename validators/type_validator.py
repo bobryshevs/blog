@@ -1,9 +1,8 @@
-from .base_validator import BaseValidator
 
 
-class TypeValidator(BaseValidator):
+class TypeValidator():
     def __init__(self, key: str, type_: type) -> None:
-        super().__init__(key)
+        self.key = key
         self.value_type = type_
 
     def valid(self, args: dict) -> bool:

@@ -1,23 +1,15 @@
-from .base_validator import BaseValidator
 
 
-class StrLenValidator(BaseValidator):
+class StrLenValidator():
+    def __init__(self, key: str) -> None:
+        self.key = key
 
-    def valid(self, args: dict, _min=1, _max=None) -> bool:
-        '''[min, max] --> Including interval boundaries'''
+    def valid(self, args: dict, min_len=None, max_len=None) -> bool:
+        '''[min_len, max_len] --> Including interval boundaries'''
+        if min_len is None and max_len is None:
+            return True
 
-        if not self._check_args_for_valid(_min, _max):
-            raise ValueError(
-                f"_min and _max must be positive integers "
-                f"but {_min =} and {max = } was given"
-            )
+        if max_len is not None:
+            return min_len <= len(args.get(self.key)) <= max_len
 
-        if _max is not None:
-            return _min <= len(args.get(self.key)) <= _max
-
-        return _min <= len(args.get(self.key))
-
-    def _check_args_for_valid(self, _min: int, _max: int) -> bool:
-        if _max is not None:
-            return not (_min < 0 or _max < 0)
-        return not (_min < 0)
+        return min_len <= len(args.get(self.key))
