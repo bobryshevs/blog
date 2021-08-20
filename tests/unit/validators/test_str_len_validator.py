@@ -6,34 +6,49 @@ import validators
 
 class TestStrLenValidator:
 
-    def test_valid_min_and_max_more_than_max(self):
+    def test_validmin_len_andmax_len_more_thanmax_len(self):
         key = 'string'
-        _min = 1
-        _max = 4
-        args = {key: 's' * (_max + 1)}  # length of value always more than max
+        min_len = 1
+        max_len = 4
+        args = {key: '12345'}  # length of value always more than max
 
-        validator = StrLenValidator(key=key)
+        validator = StrLenValidator(key=key, min_len=min_len, max_len=max_len)
 
-        assert validator.valid(args, _min, _max) is False
+        assert validator.valid(args) is False
 
-    def test_valid_min_and_max_less_than_min(self):
+    def test_valid_without_min_false(self):
         key = 'string'
-        _min = 1
+        max_len = 2
+        args = {key: '123'}
+
+        validator = StrLenValidator(key=key, max_len=max_len)
+
+        assert validator.valid(args) is False
+
+    def test_valid_without_min_true(self):
+        key = 'string'
+        max_len = 1024
+        args = {key: '123456'}
+
+        validator = StrLenValidator(key=key, max_len=max_len)
+
+        assert validator.valid(args) is True
+
+    def test_valid_without_max_false(self):
+        key = 'string'
+        min_len = 1
         args = {key: ''}
+        validator = StrLenValidator(key=key, min_len=min_len)
 
-        validator = StrLenValidator(key=key)
+        assert validator.valid(args) is False
 
-        assert validator.valid(args, _min) is False
-
-    def test_valid_valid(self):
+    def test_valid_without_max_true(self):
         key = 'string'
-        _min = 2
-        _max = 5
-        args = {key: 's' * (_max - 1)}
+        min_len = 2
+        args = {key: '123'}
+        validator = StrLenValidator(key=key, min_len=min_len)
 
-        validator = StrLenValidator(key=key)
-
-        assert validator.valid(args, _min, _max) is True
+        assert validator.valid(args) is True
 
     def test_without_min_max(self):
         key = 'string'
@@ -41,6 +56,15 @@ class TestStrLenValidator:
         args = {key: 's'}
 
         validator = StrLenValidator(key=key)
+
+        assert validator.valid(args) is True
+
+    def test_valid_valid(self):
+        key = 'string'
+        min_len = 2
+        max_len = 5
+        args = {key: 'ss'}
+        validator = StrLenValidator(key=key, min_len=min_len, max_len=max_len)
 
         assert validator.valid(args) is True
 
