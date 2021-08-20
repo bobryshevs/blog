@@ -9,5 +9,5 @@ class ValidateService:
         for validator in self.validators:
             if validator.valid(args):
                 continue
-            raise BadRequest()  # Change to error_dict
+            raise BadRequest(f'{str(type(validator))} - {validator.key}')
         return True

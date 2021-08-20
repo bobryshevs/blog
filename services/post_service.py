@@ -3,7 +3,6 @@ from bson import ObjectId
 
 from exceptions import (
     NotFound,
-    BadRequest
 )
 from repositories import PostRepository
 from models import Post
@@ -25,59 +24,53 @@ class PostService:
         self.update_validate_service = update_validate_service
         self.delete_validate_service = object_id_validate_service
 
-    def get_page(self, args: dict) -> list[Post]:
+    def get_page(self, args: dict[str, int]) -> list[Post]:
         self.get_page_validate_service.validate(args)
         return self.repository.get_page(
-            int(args.get('page')),
-            int(args.get('page_size'))
+            args.get('page'),
+            args.get('page_size')
         )
 
     def get_by_id(self, args: dict) -> Post:
         self.get_by_id_validate_service.validate(args)
         post_id = ObjectId(args['id'])
-
-        if not self.repository.exists(post_id):
-            raise NotFound
+        post = self.repository.get_by_id(post_id)
+        if post is None:
+            raise NotFound()
 
         return self.repository.get_by_id(post_id)
 
-    def delete(self, args: dict) -> None:
+    def delete(self, args: dict[str, str]) -> None:
         self.delete_validate_service.validate(args)
-        if not self.repository.exists(ObjectId(args.get('id'))):
-            raise NotFound()
-        self.repository.delete(ObjectId(args.get('id')))
-        return None
-
-    def create(self, args: dict) -> Post:
-        self.create_validate_service.validate(args)
-        post = Post(
-            text=args.get('text'),
-            author=args.get('author'),
-            date_of_creation=datetime.now()
-        )
-        post.id = self.repository.create(post)
-
-        return post
-
-    def update(self, args: dict) -> Post:
-        self.update_validate_service.validate(args)
-
-        if not self.repository.exists(ObjectId(args.get('id'))):
-            raise NotFound()
-
-        post = self.repository.get_by_id(ObjectId(args.get('id')))
-        post.text = args.get('text')
-        post.author = args.get('author')
-
-        return self.repository.update(post)
-
-    def check_valid_and_exists_id(self, post_id: str) -> bool:
-        if not ObjectId.is_valid(post_id):
-            raise BadRequest()
-
-        post_id = ObjectId(post_id)
+        post_id = ObjectId(args.get('id'))
 
         if not self.repository.exists(post_id):
             raise NotFound()
 
-        return True
+        self.repository.delete(ObjectId(args.get('id')))
+
+    def create(self, args: dict[str, str]) -> Post:
+        self.create_validate_service.validate(args)
+        post = Post.from_request(
+            {
+                "text": args.get('text'),
+                "author": args.get('author'),
+                "date_of_creation": datetime.now()
+            }
+        )
+        post.id = self.repository.create(post)
+        return post
+
+    def update(self, args: dict[str, str]) -> Post:
+        self.update_validate_service.validate(args)
+
+        post_id = ObjectId(args.get('id'))
+
+        post = self.repository.get_by_id(post_id)
+
+        if post is None:
+            raise NotFound()
+
+        post.assign_request(args)
+        self.repository.update(post)
+        return post

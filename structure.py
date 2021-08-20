@@ -71,11 +71,11 @@ content_author_validator = StrLenValidator(key='author')
 
 
 # // post_get_by_id \\ #
-presence_id_validator = PresenceValidator(key='post_id')
+presence_id_validator = PresenceValidator(key='id')
 
-type_str_id_validator = TypeValidator(key='post_id', type_=str)
+type_str_id_validator = TypeValidator(key='id', type_=str)
 
-object_id_validator = ObjectIdValidator(key='post_id')
+object_id_validator = ObjectIdValidator(key='id')
 
 
 # // post_update \\ #
