@@ -17,3 +17,15 @@ class TestContentPositiveIntValidator:
         validator = PositiveIntValidator(key)
 
         assert validator.valid(args) is True
+
+    def test_skip(self):
+        key = 'page'
+        arg_list = [
+            {key: 1.4},
+            {key: ()},
+            {key: PositiveIntValidator(key)}
+        ]
+        validator = PositiveIntValidator(key)
+
+        for args in arg_list:
+            assert validator.valid(args) is True

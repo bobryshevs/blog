@@ -21,10 +21,15 @@ post = Blueprint('post', __name__)
 
 @post.route('/')
 def get_post_page():
+    page = request.args.get('page', type=int)
+    page_size = request.args.get('page_size', type=int)
     try:
         posts = [
             post_presenter.to_json(post)
-            for post in post_service.get_page(request.args)
+            for post in post_service.get_page({
+                'page': page,
+                'page_size': page_size
+            })
         ]
         return jsonify(posts), 200
 

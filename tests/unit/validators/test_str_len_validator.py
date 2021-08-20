@@ -43,3 +43,15 @@ class TestStrLenValidator:
         validator = StrLenValidator(key=key)
 
         assert validator.valid(args) is True
+
+    def test_skip(self):
+        key = 'string'
+        arg_list = [
+            {key: 123},
+            {key: 1.23},
+            {key: StrLenValidator(key)}
+        ]
+        validator = StrLenValidator(key)
+
+        for args in arg_list:
+            assert validator.valid(args) is True

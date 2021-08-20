@@ -2,7 +2,7 @@ from .presence_validator import PresenceValidator
 from .type_validator import TypeValidator
 
 
-from .non_zero_str_validator import NonZeroStrValidator
+from .str_len_validator import StrLenValidator
 from .object_id_validator import ObjectIdValidator
 from .int_representable_validator import IntRepresentableValidator
 from .positive_int_validator import PositiveIntValidator

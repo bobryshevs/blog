@@ -19,7 +19,6 @@ from services import (
 from validators import (
     PresenceValidator,
     TypeValidator,
-    NonZeroStrValidator,
     ObjectIdValidator,
     PositiveIntValidator,
     IntRepresentableValidator,
@@ -68,7 +67,7 @@ presence_author_validator = PresenceValidator(key='author')
 type_text_validator = TypeValidator(key='text', type_=str)
 type_author_validator = TypeValidator(key='author', type_=str)
 
-content_author_validator = NonZeroStrValidator(key='author')
+content_author_validator = StrLenValidator(key='author')
 
 
 # // post_get_by_id \\ #

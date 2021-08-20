@@ -6,6 +6,9 @@ class StrLenValidator():
 
     def valid(self, args: dict, min_len=None, max_len=None) -> bool:
         '''[min_len, max_len] --> Including interval boundaries'''
+        if not isinstance(args.get(self.key), str):
+            return self.__skip()
+            
         if min_len is None and max_len is None:
             return True
 
@@ -13,3 +16,6 @@ class StrLenValidator():
             return min_len <= len(args.get(self.key)) <= max_len
 
         return min_len <= len(args.get(self.key))
+
+    def __skip(self):
+        return True

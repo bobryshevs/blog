@@ -5,7 +5,4 @@ class PresenceValidator():
         self.key = key
 
     def valid(self, args: dict) -> bool:
-        if self.key not in args:
-            return False
-
-        return True
+        return self.key in args

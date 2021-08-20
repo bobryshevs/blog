@@ -5,6 +5,8 @@ class IntRepresentableValidator():
         self.key = key
 
     def valid(self, args: dict) -> bool:
+        if not isinstance(args.get(self.key), str):
+            return self.__skip()
         try:
             # argument must be a string:
             #           // int("1.3") -> Exception
@@ -14,3 +16,6 @@ class IntRepresentableValidator():
             return True
         except (TypeError, ValueError):
             return False
+
+    def __skip(self) -> bool:
+        return True
