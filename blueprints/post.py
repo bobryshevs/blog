@@ -1,63 +1,62 @@
-import re
-from exceptions import (
-    NotFound,
-    BadRequest
-)
 from flask import (
     Blueprint,
     request,
     jsonify,
-    make_response
 )
-import exceptions
+
 from structure import (
     post_presenter,
     post_service
 )
-import json
+from exceptions import (
+    NotFound,
+    BadRequest
+)
+
 
 post = Blueprint('post', __name__)
 
 
 @post.route('/')
 def get_post_page():
-    page = request.args.get('page', type=int)
-    page_size = request.args.get('page_size', type=int)
+    page = request.args.get('page', default=1, type=int)
+    page_size = request.args.get('page_size', defalut=10, type=int)
     try:
-        posts = [
-            post_presenter.to_json(post)
-            for post in post_service.get_page({
+        post_obj_list = post_service.get_page(
+            {
                 'page': page,
                 'page_size': page_size
-            })
-        ]
-        return jsonify(posts), 200
-
+            }
+        )
     except BadRequest as err:
         return str(err), 400
 
+    posts = [post_presenter.to_json(post) for post in post_obj_list]
+    return jsonify(posts), 200
 
-@post.route('/<post_id>', methods=['GET'])
-def get_post_by_id(post_id: str):
+
+@post.route('/<id>', methods=['GET'])
+def get_post_by_id(id: str):
     try:
-        post = post_service.get_by_id({'post_id': post_id})
+        post = post_service.get_by_id({'id': id})
     except NotFound as err:
         return str(err), 404
     except BadRequest as err:
-        return str(err), 404  # Must be 400
+        return str(err), 400
 
     return post_presenter.to_json(post), 200
 
 
-@post.route('/<post_id>', methods=["DELETE"])
-def delete_post_by_id(post_id: str):
+@post.route('/<id>', methods=["DELETE"])
+def delete_post_by_id(id: str):
     try:
-        post_service.delete({'post_id': post_id})
-        return '', 204
+        post_service.delete({'id': id})
     except NotFound as err:
         return str(err), 404
     except BadRequest as err:
-        return str(err), 404  # Must be 400
+        return str(err), 400  # Must be 400
+
+    return '', 204
 
 
 @post.route('/', methods=['POST'])
@@ -67,19 +66,18 @@ def create_post():
         post = post_service.create(fields)
     except BadRequest as err:
         return str(err), 400
-    response = make_response(post_presenter.to_json(post))
-    response.headers['Location'] = f'/post/{post.id}'
-    response.status_code = 201
-    return response
+
+    return post_presenter.to_json(post), 200
 
 
-@post.route('/<post_id>', methods=['PUT'])
-def update_post(post_id: str):
+@post.route('/<id>', methods=['PUT'])
+def update_post(id: str):
+    fields = request.json | {'id': id}
     try:
-        fields = request.json | {'post_id': post_id}
         upd_post = post_service.update(fields)
-        return post_presenter.to_json(upd_post), 200
     except BadRequest as err:
         return str(err), 400
     except NotFound as err:
         return str(err), 404
+
+    return post_presenter.to_json(upd_post), 200
