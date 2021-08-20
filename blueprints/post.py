@@ -54,7 +54,7 @@ def delete_post_by_id(id: str):
     except NotFound as err:
         return str(err), 404
     except BadRequest as err:
-        return str(err), 400  # Must be 400
+        return str(err), 400
 
     return '', 204
 

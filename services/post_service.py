@@ -1,10 +1,12 @@
-from re import A
-from exceptions import NotFound, BadRequest
 from datetime import datetime
-from bson.objectid import ObjectId
+from bson import ObjectId
+
+from exceptions import (
+    NotFound,
+    BadRequest
+)
 from repositories import PostRepository
 from models import Post
-from bson import ObjectId
 
 
 class PostService:
@@ -31,13 +33,8 @@ class PostService:
         )
 
     def get_by_id(self, args: dict) -> Post:
-        """
-            args: {
-                "post_id": str -> ObjectId
-            }
-        """
         self.get_by_id_validate_service.validate(args)
-        post_id = ObjectId(args['post_id'])
+        post_id = ObjectId(args['id'])
 
         if not self.repository.exists(post_id):
             raise NotFound
@@ -45,24 +42,13 @@ class PostService:
         return self.repository.get_by_id(post_id)
 
     def delete(self, args: dict) -> None:
-        """
-            args: {
-                "post_id": str -> ObjectId
-            }
-        """
         self.delete_validate_service.validate(args)
-        if not self.repository.exists(ObjectId(args.get('post_id'))):
+        if not self.repository.exists(ObjectId(args.get('id'))):
             raise NotFound()
-        self.repository.delete(ObjectId(args.get('post_id')))
+        self.repository.delete(ObjectId(args.get('id')))
         return None
 
     def create(self, args: dict) -> Post:
-        """
-            args: {
-                "text": str,
-                "author": str, len > 0
-            }
-        """
         self.create_validate_service.validate(args)
         post = Post(
             text=args.get('text'),
@@ -74,20 +60,12 @@ class PostService:
         return post
 
     def update(self, args: dict) -> Post:
-        """
-            args :{
-                "post_id": str -> ObjectId
-                "text": str
-                "author": str, len > 0
-            }
-        """
-
         self.update_validate_service.validate(args)
 
-        if not self.repository.exists(ObjectId(args.get('post_id'))):
+        if not self.repository.exists(ObjectId(args.get('id'))):
             raise NotFound()
 
-        post = self.repository.get_by_id(ObjectId(args.get('post_id')))
+        post = self.repository.get_by_id(ObjectId(args.get('id')))
         post.text = args.get('text')
         post.author = args.get('author')
 
