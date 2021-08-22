@@ -1,12 +1,10 @@
-from repositories.post_repository import PostRepository
 from datetime import datetime
 from bson.objectid import ObjectId
+from mock import Mock
+
+from repositories.post_repository import PostRepository
 from translators import PostTranslator
 from models import Post
-from mock import (
-    Mock,
-    MagicMock
-)
 
 
 class TestPostRepository:
@@ -18,14 +16,6 @@ class TestPostRepository:
 
     def teardown(self):
         pass
-
-    def test_get_page(self):
-        page = 1
-        page_size = 2
-        self.collection.find = MagicMock()
-        self.repository.get_page(page, page_size)
-        
-        # Todo: finish it
 
     def test_get_by_id_without_post(self):
         post_id = ObjectId()
