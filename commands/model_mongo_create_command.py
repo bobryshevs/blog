@@ -10,7 +10,7 @@ class ModelMongoCreateCommand(ReversibleCommand):
         self.repository = repository
 
     def do(self, model: Model) -> None:
-        self.id = self.repository.create(self._post)
+        self.id = self.repository.create(model)
 
     def undo(self):
         self.repository.delete(self.id)

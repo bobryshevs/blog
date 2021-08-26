@@ -1,7 +1,7 @@
+from models import Model
 from commands import (
     Command,
     ReversibleCommand,
-    command
 )
 from exceptions import TransactExecutorException
 
@@ -11,10 +11,10 @@ class TransactionExecutor:
         self._check_commands(commands)
         self.commands: list[Command] = commands
 
-    def execute(self, post):
+    def execute(self, model: Model):
         for i, command in enumerate(self.commands):
             try:
-                command.do()
+                command.do(model)
             except Exception as err:
                 self.rollback(index=i)
                 TransactExecutorException(str(err))
@@ -29,8 +29,9 @@ class TransactionExecutor:
         for index, command in enumerate(commands[: -number_of_unreversible]):
             if not isinstance(command, ReversibleCommand):
                 raise TransactExecutorException(
-                    f"Invalid order of passed commands.\n"
-                    f"Unreversible command with {index = }"
+                    index=index,
+                    message=f"Invalid order of passed commands.\n"
+                            f"Unreversible command with {index = }"
                 )
         return
 

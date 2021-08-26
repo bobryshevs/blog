@@ -1,4 +1,7 @@
+from functools import reduce
 from commands import (
+    ReversibleCommand,
+    Command,
     ModelMongoCreateCommand,
     RabbitPutModelCommand,
     RedisSetPostCommand
@@ -26,6 +29,20 @@ coms = [
     RedisSetPostCommand(None, None)
 ]
 
-from collections import Counter
 
-print(Counter(coms))
+a = reduce(lambda c, x: c + 1 if isinstance(x,
+           ReversibleCommand) else 0, coms, 0)
+print(a)
+
+
+class PyExc(Exception):
+    def __init__(self, index: int, msg: str) -> None:
+        super().__init__(msg, msg*2)
+        self.index = index
+
+try:
+    raise PyExc(3, 'message')
+except PyExc as err:
+    print(dir(err))
+    print(str(err))
+    print(err.index)
