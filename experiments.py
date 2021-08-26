@@ -1,6 +1,11 @@
+from commands import (
+    ModelMongoCreateCommand,
+    RabbitPutModelCommand,
+    RedisSetPostCommand
+)
 from re import I
 from bson.objectid import ObjectId
-from structure import r, post_repository
+from structure import redis_obj, post_repository
 from translators import PostTranslator
 from models import Post
 
@@ -15,13 +20,12 @@ post.comment_ids = [ObjectId() for _ in range(10)]
 pt = PostTranslator()
 
 
-to_redis = pt.to_json_str(post)
+coms = [
+    ModelMongoCreateCommand(None),
+    RabbitPutModelCommand(None, None),
+    RedisSetPostCommand(None, None)
+]
 
-r.set(post.str_id, to_redis)
+from collections import Counter
 
-from_redis = pt.from_json_str(r.get(post.str_id))
-
-print(from_redis)
-
-
-post_repository.delete(123)
+print(Counter(coms))

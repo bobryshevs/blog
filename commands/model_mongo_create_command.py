@@ -1,5 +1,5 @@
 from bson.objectid import ObjectId
-from .reversible_command import ReversibleCommand
+from commands import ReversibleCommand
 from repositories import MongoRepository
 from models import Model
 

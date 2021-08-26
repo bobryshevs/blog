@@ -8,19 +8,19 @@ class Post(Model):
         self.title: str = None
         self.content: str = None
         self.author_id: ObjectId = None
-        self.comment_ids: list[ObjectId] = None
+        self.comment_ids: list[ObjectId] = []
 
     @staticmethod
     def from_request(args: dict):
         post = Post()
-        post.title = args['title']
-        post.content = args['content']
-        post.author_id = args['author_id']
+        post.title = args["title"]
+        post.content = args["content"]
+        post.author_id = args["author_id"]
         return post
 
     def assign_request(self, args: dict):
-        self.title = args['title']
-        self.content = args['content']
+        self.title = args["title"]
+        self.content = args["content"]
 
     @property
     def str_id(self):

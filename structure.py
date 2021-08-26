@@ -7,7 +7,7 @@ from pika import (
     ConnectionParameters
 )
 
-
+from json_serializers import JsonPostSerializer
 from services.comment_service import CommentService
 from pymongo import MongoClient
 from repositories import (
@@ -53,7 +53,7 @@ REDIS_HOST = config["REDIS_HOST"]
 REDIS_PORT = config["REDIS_PORT"]
 DB_NUMBER = 0
 
-r = redis.Redis(
+redis_obj = redis.Redis(
     host=REDIS_HOST,
     port=REDIS_PORT,
     db=DB_NUMBER
@@ -74,6 +74,9 @@ rmq_connection = BlockingConnection(
     )
 )
 rmq_channel = rmq_connection.channel()
+
+# --- JsonSerializers --- #
+json_post_serializer = JsonPostSerializer()
 
 # --- Translators --- #
 post_tranlator = PostTranslator()

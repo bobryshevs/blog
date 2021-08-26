@@ -1,17 +1,17 @@
-from models import Post
+from models import Model
 from commands import Command
-from structure import post_tranlator
+from json_serializers import JsonSerializer
 
 
-class RabbitPutPostCommand(Command):
+class RabbitPutModelCommand(Command):
     """ This command should be called last """
 
-    def __init__(self, channel) -> None:
+    def __init__(self, channel, json_serializer: JsonSerializer) -> None:
         self.channel = channel
-        self.translator = post_tranlator
+        self.serializer = json_serializer
 
-    def do(self, post: Post) -> None:
-        self.channel.queue_declare(queue='posts')
-        self.channel.basic_publish(exchange='',
-                                   routing_key='post',
-                                   body=self.translator.to_json_str(post))
+    def do(self, model: Model) -> None:
+        self.channel.basic_publish(
+            exchange='',
+            routing_key='post',
+            body=self.serializer.to_json(model))
