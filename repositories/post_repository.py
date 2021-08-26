@@ -1,7 +1,7 @@
 from translators.post_tranlator import PostTranslator
 from pymongo import MongoClient
 from bson import ObjectId
-from repositories.repository import MongoRepository
+from repositories.mongo_repository import MongoRepository
 from models import Post
 
 

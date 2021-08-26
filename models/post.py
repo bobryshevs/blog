@@ -21,3 +21,15 @@ class Post(Model):
     def assign_request(self, args: dict):
         self.title = args['title']
         self.content = args['content']
+
+    @property
+    def str_id(self):
+        return str(self.id)
+
+    def __str__(self):
+        return f"< Post [{self.id}]> \n" \
+            f"{self.id = }\n" \
+            f"{self.title = }\n" \
+            f"{self.content = }\n" \
+            f"{self.author_id = }\n" \
+            f"{self.comment_ids = }"

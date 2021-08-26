@@ -1,6 +1,12 @@
+
 import redis
 from dotenv import dotenv_values
-from pika import PlainCredentials
+from pika import (
+    PlainCredentials,
+    BlockingConnection,
+    ConnectionParameters
+)
+
 
 from services.comment_service import CommentService
 from pymongo import MongoClient
@@ -10,7 +16,8 @@ from repositories import (
 )
 from translators import (
     PostTranslator,
-    CommentTranslator
+    CommentTranslator,
+    post_tranlator
 )
 from presenters import (
     PostPresenter,
@@ -60,11 +67,21 @@ rmq_credentials = PlainCredentials(
     username=RMQ_USERNAME,
     password=RMQ_PASSWORD
 )
+rmq_connection = BlockingConnection(
+    ConnectionParameters(
+        host='localhost',
+        credentials=rmq_credentials
+    )
+)
+rmq_channel = rmq_connection.channel()
+
+# --- Translators --- #
+post_tranlator = PostTranslator()
 
 # --- Repositories --- #
 post_repository = PostRepository(
     collection=mongo_client.blog_database.posts,
-    translator=PostTranslator()
+    translator=post_tranlator
 )
 comment_repository = CommentRepository(
     collection=mongo_client.blog_data_base.comments,

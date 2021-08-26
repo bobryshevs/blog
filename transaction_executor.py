@@ -6,7 +6,7 @@ class TransactionExecutor:
     def __init__(self, commands: list[Command]) -> None:
         self.commands: list[Command] = commands
 
-    def execute(self):
+    def execute(self, post):
         for i, command in enumerate(self.commands):
             try:
                 command.do()
