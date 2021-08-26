@@ -4,7 +4,7 @@ from commands import (
     Command,
     ModelMongoCreateCommand,
     RabbitPutModelCommand,
-    RedisSetPostCommand
+    RedisSetModelCommand
 )
 from re import I
 from bson.objectid import ObjectId
@@ -26,7 +26,7 @@ pt = PostTranslator()
 coms = [
     ModelMongoCreateCommand(None),
     RabbitPutModelCommand(None, None),
-    RedisSetPostCommand(None, None)
+    RedisSetModelCommand(None, None)
 ]
 
 

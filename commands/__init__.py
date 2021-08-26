@@ -4,5 +4,5 @@ from .command import (
 )
 
 from .model_mongo_create_command import ModelMongoCreateCommand
-from .rabbit_put_post_command import RabbitPutModelCommand
-from .redis_set_post_command import RedisSetPostCommand
+from .rabbit_put_model_command import RabbitPutModelCommand
+from .redis_set_model_command import RedisSetModelCommand
