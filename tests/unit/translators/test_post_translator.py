@@ -12,37 +12,38 @@ def post_translator():
 
 
 def test_to_document_valid(post_translator):
-    post = Post(
-        text="Text for post",
-        author="Sviatoslav Bobryshev",
-        date_of_creation=datetime(2021, 8, 11, 16, 52, 25, 551959)
-    )
-
+    post = Post()
+    post.title = "title"
+    post.content = "content"
+    post.author_id_id = ObjectId()
     document = {
-        "text": "Text for post",
-        "author": "Sviatoslav Bobryshev",
-        "date_of_creation": datetime(2021, 8, 11, 16, 52, 25, 551959)
+        "title": post.title,
+        "author_id": post.author_id,
+        "content": post.content
     }
 
     result = post_translator.to_document(post)
 
     assert isinstance(result, dict) is True
-    assert document['text'] == result['text']
-    assert document['author'] == result['author']
-    assert document['date_of_creation'] == result['date_of_creation']
+    assert document["title"] == result["title"]
+    assert document["author_id"] == result["author_id"]
+    assert document["content"] == result["content"]
 
 
 def test_from_document_valid(post_translator):
     document = {
-        "_id": ObjectId('6112f2704808cefd2cf9ccfb'),
-        "text": "Text from document valid",
-        "author": "Sviatoslav",
-        "date_of_creation": datetime(2021, 8, 11, 0, 41, 4, 327873)}
+        "_id": ObjectId("6112f2704808cefd2cf9ccfb"),
+        "title": "Text from document valid",
+        "author_id": "Sviatoslav",
+        "content": "content",
+        "comment_ids": []
+    }
 
     result = post_translator.from_document(document)
 
     assert isinstance(result, Post) is True
-    assert document['_id'] == result.id
-    assert document['text'] == result.text
-    assert document['author'] == result.author
-    assert document['date_of_creation'] == result.date_of_creation
+    assert document["_id"] == result.id
+    assert document["title"] == result.title
+    assert document["author_id"] == result.author_id
+    assert document["content"] == result.content
+    assert document["comment_ids"] == result.comment_ids

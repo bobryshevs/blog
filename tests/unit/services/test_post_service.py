@@ -30,8 +30,9 @@ class TestPostService:
 
     def test_create(self):
         args = {
-            "text": "post_text",
-            "author": "post_author"
+            "title": "title",
+            "content": "content",
+            "author_id": None
         }
         expected_id = ObjectId()
         post_service = PostService(*self.mock_arg_list)

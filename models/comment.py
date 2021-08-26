@@ -1,18 +1,16 @@
-from datetime import datetime
 from bson.objectid import ObjectId
 from .model import Model
 
 
 class Comment(Model):
-    def __init__(self,
-                 text: str,
-                 author: str,
-                 post_id: ObjectId,
-                 date_of_creation: datetime = None,
-                 m_id: ObjectId = None
-                 ):
-        self.id = m_id
-        self.text: str = text
-        self.author: str = author
-        self.post_id: ObjectId = post_id
-        self.date_of_creation: str = date_of_creation
+    def __init__(self):
+        self.id: ObjectId = None
+        self.author_id: ObjectId = None
+        self.text: str = None
+
+    @staticmethod
+    def from_request(args: dict):
+        comment = Comment()
+        comment.author_id = args.get("author_id")
+        comment.text = args.get("text")
+        return comment

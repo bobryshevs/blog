@@ -1,3 +1,7 @@
+import redis
+from dotenv import dotenv_values
+from pika import PlainCredentials
+
 from services.comment_service import CommentService
 from pymongo import MongoClient
 from repositories import (
@@ -24,10 +28,38 @@ from validators import (
     IntRepresentableValidator,
     StrLenValidator
 )
-MONGO_HOST = "localhost"
-MONGO_PORT = 27017
 
-mongo_client = MongoClient(f"mongodb://{MONGO_HOST}:{MONGO_PORT}/")
+config = dotenv_values('.env')
+
+# --- Mongo --- #
+MONGO_HOST = config["MONGO_HOST"]
+MONGO_PORT = config["MONGO_PORT"]
+MONGO_USER = config["MONGO_USER"]
+MONGO_PASSWORD = config["MONGO_PASSWORD"]
+
+mongo_client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@"
+                           f"{MONGO_HOST}:{MONGO_PORT}")
+
+
+#  --- Redis --- #
+REDIS_HOST = config["REDIS_HOST"]
+REDIS_PORT = config["REDIS_PORT"]
+DB_NUMBER = 0
+
+r = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=DB_NUMBER
+)
+
+
+# --- RabbitMQ --- #
+RMQ_USERNAME = config["RABBITMQ_DEFAULT_USER"]
+RMQ_PASSWORD = config["RABBITMQ_DEFAULT_PASS"]
+rmq_credentials = PlainCredentials(
+    username=RMQ_USERNAME,
+    password=RMQ_PASSWORD
+)
 
 # --- Repositories --- #
 post_repository = PostRepository(

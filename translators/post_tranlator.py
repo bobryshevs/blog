@@ -6,15 +6,16 @@ class PostTranslator(Translator):
 
     def to_document(self, post: Post) -> dict:
         return {
-            "text": post.text,
-            "author": post.author,
-            "date_of_creation": post.date_of_creation
+            "title": post.title,
+            "content": post.content,
+            "author_id": post.author_id
         }
 
     def from_document(self, mongo_post: dict) -> Post:
-        post = Post(
-            text=mongo_post['text'],
-            author=mongo_post['author'],
-            date_of_creation=mongo_post['date_of_creation'],
-            m_id=mongo_post['_id'])
+        post = Post()
+        post.id = mongo_post.get("_id")
+        post.title = mongo_post.get("title")
+        post.content = mongo_post.get("content")
+        post.author_id = mongo_post.get("author_id")
+        post.comment_ids = mongo_post.get("comment_ids")
         return post
