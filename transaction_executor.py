@@ -16,12 +16,18 @@ class TransactionExecutor:
             try:
                 command.do(model)
             except Exception as err:
-                self.rollback(index=i)
-                TransactExecutorException(str(err))
+                err_messages = self.rollback(index=i)
+                err_messages.append(str(err))
+                raise TransactExecutorException(err_messages)
 
-    def rollback(self, index: int):
+    def rollback(self, index: int) -> list[str]:
+        err_messages = []
         for i in range(index, -1, -1):
-            self.commands[i].undo()
+            if isinstance(self.commands[i], ReversibleCommand):
+                self.commands[i].undo()
+            else:
+                err_messages.append(str(self.commands[i]))
+        return err_messages
 
     def _check_commands(self, commands: list[Command]) -> None:
         number_of_reversible = self._calc_number_of_reversible(commands)

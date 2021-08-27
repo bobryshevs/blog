@@ -61,7 +61,8 @@ class TestPostRepository:
         document = {
             "title": post.title,
             "author_id": post.author_id,
-            "content": post.content
+            "content": post.content,
+            "comment_ids": post.comment_ids
         }
         self.repository.update(post)
         self.collection.update_one.assert_called_once_with(
@@ -82,7 +83,8 @@ class TestPostRepository:
         document = {
             "title": post.title,
             "content": post.content,
-            "author_id": post.author_id
+            "author_id": post.author_id,
+            "comment_ids": post.comment_ids
         }
         self.repository.create(post)
         self.collection.insert_one.assert_called_once_with(document)

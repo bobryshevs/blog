@@ -32,7 +32,7 @@ class TestPostService:
         args = {
             "title": "title",
             "content": "content",
-            "author_id": None
+            "author_id": ObjectId(),
         }
         expected_id = ObjectId()
         post_service = PostService(*self.mock_arg_list)
@@ -92,8 +92,9 @@ class TestPostService:
     def test_update_exists(self):
         args = {
             "id": ObjectId(),
-            "text": "post_text",
-            "author": "sviatoslav"
+            "title": "title",
+            "content": "content",
+            "author_id": ObjectId()
         }
         expected_post = Post()
         post_service = PostService(*self.mock_arg_list)

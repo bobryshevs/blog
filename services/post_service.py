@@ -28,9 +28,9 @@ class PostService:
         self.create_validate_service.validate(args)
         post = Post.from_request(
             {
-                "text": args.get('text'),
-                "author": args.get('author'),
-                "date_of_creation": datetime.now()
+                "title": args.get("title"),
+                "author_id": args.get("author_id"),
+                "content":  args.get("content")
             }
         )
         post.id = self.repository.create(post)
@@ -38,7 +38,7 @@ class PostService:
 
     def get_by_id(self, args: dict) -> Post:
         self.get_by_id_validate_service.validate(args)
-        post_id = ObjectId(args['id'])
+        post_id = ObjectId(args["id"])
         post = self.repository.get_by_id(post_id)
         if post is None:
             raise NotFound()
@@ -47,7 +47,7 @@ class PostService:
 
     def update(self, args: dict[str, str]) -> Post:
         self.update_validate_service.validate(args)
-        post_id = ObjectId(args.get('id'))
+        post_id = ObjectId(args.get("id"))
         post = self.repository.get_by_id(post_id)
 
         if post is None:
@@ -59,7 +59,7 @@ class PostService:
 
     def delete(self, args: dict[str, str]) -> None:
         self.delete_validate_service.validate(args)
-        post_id = ObjectId(args.get('id'))
+        post_id = ObjectId(args.get("id"))
 
         if not self.repository.exists(post_id):
             raise NotFound()
@@ -69,6 +69,6 @@ class PostService:
     def get_page(self, args: dict[str, int]) -> list[Post]:
         self.get_page_validate_service.validate(args)
         return self.repository.get_page(
-            args.get('page'),
-            args.get('page_size')
+            args.get("page"),
+            args.get("page_size")
         )
