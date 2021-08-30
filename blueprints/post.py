@@ -61,9 +61,8 @@ def delete_post_by_id(id: str):
 
 @post.route('/', methods=['POST'])
 def create_post():
-    fields = request.json
     try:
-        post = post_service.create(fields)
+        post = post_service.create(request.json)
     except BadRequest as err:
         return str(err), 400
 

@@ -36,7 +36,7 @@ from validators import (
     StrLenValidator
 )
 
-config = dotenv_values('.env')
+config = dotenv_values(".env")
 
 # --- Mongo --- #
 MONGO_HOST = config["MONGO_HOST"]
@@ -69,7 +69,7 @@ rmq_credentials = PlainCredentials(
 )
 rmq_connection = BlockingConnection(
     ConnectionParameters(
-        host='localhost',
+        host="localhost",
         credentials=rmq_credentials
     )
 )
@@ -98,36 +98,40 @@ comment_presenter = CommentPresenter()
 # --- Validarots --- #
 
 # // post_get_page \\ #
-presence_page_validator = PresenceValidator(key='page')
-presence_page_size_vaidator = PresenceValidator(key='page_size')
+presence_page_validator = PresenceValidator(key="page")
+presence_page_size_vaidator = PresenceValidator(key="page_size")
 
-type_page_validator = TypeValidator(key='page', type_=str)
-type_page_size_validator = TypeValidator(key='page_size', type_=str)
+type_page_validator = TypeValidator(key="page", type_=str)
+type_page_size_validator = TypeValidator(key="page_size", type_=str)
 
 int_representable_page_validator = IntRepresentableValidator(
-    key='page')
+    key="page")
 int_representable_page_size_validator = IntRepresentableValidator(
-    'page_size')
-positive_int_page_validator = PositiveIntValidator('page')
+    "page_size")
+positive_int_page_validator = PositiveIntValidator("page")
 positive_int_page_size_validator = PositiveIntValidator(
-    'page_size')
+    "page_size")
 
 # // post_create \\ #
-presence_text_validator = PresenceValidator(key='text')
-presence_author_validator = PresenceValidator(key='author')
+presence_title_validator = PresenceValidator(key="title")
+presence_author_id_validator = PresenceValidator(key="author_id")
+presence_content_validator = PresenceValidator(key="content")
 
-type_text_validator = TypeValidator(key='text', type_=str)
-type_author_validator = TypeValidator(key='author', type_=str)
+type_title_validator = TypeValidator(key="title", type_=str)
+type_author_id_validator = TypeValidator(key="author_id", type_=str)
+type_content_validator = TypeValidator(key="content", type_=str)
 
-content_author_validator = StrLenValidator(key='author')
+content_title_validator = StrLenValidator(key="title")
+content_author_id_validator = StrLenValidator(key="author")
 
+object_id_author_id_validator = ObjectIdValidator(key="author_id")
 
 # // post_get_by_id \\ #
-presence_id_validator = PresenceValidator(key='id')
+presence_id_validator = PresenceValidator(key="id")
 
-type_str_id_validator = TypeValidator(key='id', type_=str)
+type_str_id_validator = TypeValidator(key="id", type_=str)
 
-object_id_validator = ObjectIdValidator(key='id')
+object_id_validator = ObjectIdValidator(key="id")
 
 
 # // post_update \\ #
@@ -135,8 +139,7 @@ object_id_validator = ObjectIdValidator(key='id')
 # presense, type, content of "post_id"
 # checked with validators from post_get_by_id
 
-# presence, type of "text" chekced with validators from post_create
-# presense, type, content of "author" checked with validators f
+# presense, type, content of "author_id", "title" checked with validators
 # from post_create
 
 
@@ -161,11 +164,15 @@ get_page_validate_service = ValidateService(
 )
 create_validate_service = ValidateService(
     [
-        presence_text_validator,
-        presence_author_validator,
-        type_text_validator,
-        type_author_validator,
-        content_author_validator
+        presence_title_validator,
+        presence_author_id_validator,
+        presence_content_validator,
+        type_title_validator,
+        type_author_id_validator,
+        type_content_validator,
+        content_title_validator,
+        content_author_id_validator,
+        object_id_author_id_validator
     ]
 )
 object_id_validate_service = ValidateService(
@@ -177,14 +184,18 @@ object_id_validate_service = ValidateService(
 )
 post_update_validator_service = ValidateService(
     [
+        presence_title_validator,
+        presence_author_id_validator,
         presence_id_validator,
-        type_str_id_validator,
-        object_id_validator,
-        presence_text_validator,
-        type_text_validator,
-        presence_author_validator,
-        type_author_validator,
-        content_author_validator
+        presence_content_validator,
+        type_author_id_validator,
+        type_title_validator,
+        type_content_validator,
+        content_author_id_validator,
+        content_title_validator,
+        object_id_author_id_validator,
+        object_id_validator
+
     ]
 )
 

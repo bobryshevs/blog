@@ -1,10 +1,4 @@
-from flask import Flask, jsonify, request, render_template
-from flask.helpers import url_for
-from flask_pymongo import PyMongo
-from pymongo import MongoClient
-from models.post import Post
-from translators import PostTranslator
-from db_worker import FMongoDb
+from flask import Flask, render_template
 from blueprints import post, comment
 
 
@@ -14,7 +8,7 @@ from blueprints import post, comment
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "SECRET"
 
-app.register_blueprint(post, url_prefix='/post')
+app.register_blueprint(post, url_prefix='/posts')
 app.register_blueprint(comment, url_prefix='/comment')
 
 

@@ -26,6 +26,10 @@ class Post(Model):
     def str_id(self):
         return str(self.id)
 
+    @property
+    def str_comment_ids(self):
+        return [str(c_id) for c_id in self.comment_ids]
+
     def __str__(self):
         return f"< Post [{self.id}]> \n" \
             f"{self.id = }\n" \
