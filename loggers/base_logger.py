@@ -33,6 +33,9 @@ class BaseLogger(object):
     def init_log(self, object_link, level="DEBUG"):
         self.level_to_func[level](f"The {object_link} has been initialized")
 
+    def log(self, message, level="INFO"):
+        self.level_to_func[level](message)
+
     def get_level_to_function_dict(self) -> dict:
         return {
             "DEBUG": self.debug,
