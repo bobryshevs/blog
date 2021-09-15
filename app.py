@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+from flasgger import Swagger
 from blueprints import post, comment
 
 
@@ -6,6 +7,7 @@ from blueprints import post, comment
 
 
 app = Flask(__name__)
+swagger = Swagger(app)
 app.config['SECRET_KEY'] = "SECRET"
 
 app.register_blueprint(post, url_prefix='/posts')

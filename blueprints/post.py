@@ -3,6 +3,7 @@ from flask import (
     request,
     jsonify,
 )
+from flasgger import swag_from
 
 from structure import (
     post_presenter,
@@ -36,6 +37,7 @@ def get_post_page():
 
 
 @post.route('/<id>', methods=['GET'])
+@swag_from('./yml_views/get_post_by_id.yml')
 def get_post_by_id(id: str):
     try:
         post = post_service.get_by_id({'id': id})

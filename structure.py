@@ -63,13 +63,14 @@ redis_obj = redis.Redis(
 # --- RabbitMQ --- #
 RMQ_USERNAME = config["RABBITMQ_DEFAULT_USER"]
 RMQ_PASSWORD = config["RABBITMQ_DEFAULT_PASS"]
+RMQ_HOST = config["RABBITMQ_HOST"]
 rmq_credentials = PlainCredentials(
     username=RMQ_USERNAME,
     password=RMQ_PASSWORD
 )
 rmq_connection = BlockingConnection(
     ConnectionParameters(
-        host="localhost",
+        host=RMQ_HOST,
         credentials=rmq_credentials
     )
 )
