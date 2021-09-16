@@ -30,7 +30,7 @@ def get_post_page():
             }
         )
     except BadRequest as err:
-        return str(err), 400
+        return jsonify(err.value), 400
 
     posts = [post_presenter.to_json(post) for post in post_obj_list]
     return jsonify(posts), 200
@@ -42,31 +42,33 @@ def get_post_by_id(id: str):
     try:
         post = post_service.get_by_id({'id': id})
     except NotFound as err:
-        return str(err), 404
+        return jsonify(err.value), 404
     except BadRequest as err:
-        return str(err), 400
+        return jsonify(err.value), 400
 
     return post_presenter.to_json(post), 200
 
 
 @post.route('/<id>', methods=["DELETE"])
+@swag_from("./yml_views/delete_post_by_id.yml")
 def delete_post_by_id(id: str):
     try:
         post_service.delete({'id': id})
     except NotFound as err:
-        return str(err), 404
+        return jsonify(err.value), 404
     except BadRequest as err:
-        return str(err), 400
+        return jsonify(err.value), 400
 
     return '', 204
 
 
 @post.route('/', methods=['POST'])
+@swag_from('./yml_views/create_post.yml')
 def create_post():
     try:
         post = post_service.create(request.json)
     except BadRequest as err:
-        return str(err), 400
+        return jsonify(err.value), 400
 
     return post_presenter.to_json(post), 200
 
@@ -77,8 +79,8 @@ def update_post(id: str):
     try:
         upd_post = post_service.update(fields)
     except BadRequest as err:
-        return str(err), 400
+        return jsonify(err.value), 400
     except NotFound as err:
-        return str(err), 404
+        return jsonify(err.value), 404
 
     return post_presenter.to_json(upd_post), 200

@@ -1,0 +1,29 @@
+openapi: "3.0.2"
+
+info:
+  title: Blog
+  version: 0.0.1
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        msg:
+          type: string
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        author_id:
+          type: string
+        comment_ids:
+          type: array
+          items:
+            type: string

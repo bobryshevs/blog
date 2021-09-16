@@ -1,43 +1,24 @@
-openapi: "3.0.2"
-info:
-  title: Blog
-  version: 0.0.1
-tags:
-  - name: "post"
-paths:
-  /post/{post_id}:
-    get:
-      tags: ["post"]
-      summary: "Get post by post id"
-      parameters:
-        - name: "post_id"
-          in: "path"
-          description: "The post id that needs to be fetched"
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Post"
-
-components:
-  schemas:
-    Post:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        content:
-          type: string
-        author_id:
-          type: string
-        comment_ids:
-          type: array
-          items:
-            type: string
+tags: 
+  - "post"
+summary: "Get post by post id"
+parameters:
+  - name: "id"
+    in: "path"
+    description: "The post id that needs to be fetched"
+    required: true
+    schema:
+      type: string
+responses:
+  200:
+    description: "successful operation"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Post"
+  400:
+    description: "there is no post with such an ID or an incorrect ID has been entered"
+    content:
+      plaintext:  # Необходимо доработать возврат ошибок в виде json
+        schema:
+          Error:
+            message: string

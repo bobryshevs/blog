@@ -1,0 +1,25 @@
+tags:
+  - "post"
+summary: "Delete post by id"
+parameters:
+  - name: "id"
+    in: "path"
+    description: "The post id thad needs to be deleted"
+    required: true
+    schema:
+      type: string
+responses:
+  204:
+    description: "Successfeul operation"
+  400:
+    description: "Incorrect post id"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Error"
+  404:
+    description: "Post with given id doesn't exitsts"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Error"

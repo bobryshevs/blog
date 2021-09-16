@@ -26,5 +26,10 @@ class StrLenValidator():
         # (int, int)
         return self.min_len <= len(args.get(self.key)) <= self.max_len
 
+    def error(self) -> str:
+        return \
+            f"Error in [{self.key}]. Given value not in" \
+            "[{self.min_len}, {self.max_len}]"
+
     def __skip(self):
         return True

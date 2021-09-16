@@ -9,5 +9,6 @@ class ValidateService:
         for validator in self.validators:
             if validator.valid(args):
                 continue
-            raise BadRequest(f'{str(type(validator))} - {validator.key}')
+            raise BadRequest(
+                {"msg": validator.error()})
         return True

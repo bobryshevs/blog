@@ -7,3 +7,8 @@ class TypeValidator():
 
     def valid(self, args: dict) -> bool:
         return isinstance(args.get(self.key), self.value_type)
+
+    def error(self) -> str:
+        return \
+            f"Error in [{self.key}]. Given value doesn't instance" \
+            "of {self.value_type}"

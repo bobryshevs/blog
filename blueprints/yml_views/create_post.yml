@@ -1,0 +1,14 @@
+tags:
+  - "post"
+summary: "Create post with given values"
+parameters:
+  - name: "title"
+    description: "Title of the post being created."
+    required: true
+    schema:
+      type: string
+  - name: "content"
+    description: "Content of the post being created."
+    required: true
+    schema:
+      type: string

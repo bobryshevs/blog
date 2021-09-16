@@ -7,8 +7,13 @@ from blueprints import post, comment
 
 
 app = Flask(__name__)
-swagger = Swagger(app)
+app.config["SWAGGER"] = {
+    "title": "SviatAPI",
+    "universion": 3
+}
+app.config["SWAGGER"]["openapi"] = "3.0.2"
 app.config['SECRET_KEY'] = "SECRET"
+swagger = Swagger(app, template_file='./swagger_config.yml')
 
 app.register_blueprint(post, url_prefix='/posts')
 app.register_blueprint(comment, url_prefix='/comment')
