@@ -1,4 +1,4 @@
-tags: 
+tags:
   - "post"
 summary: "Get post by post id"
 parameters:
@@ -16,9 +16,8 @@ responses:
         schema:
           $ref: "#/components/schemas/Post"
   400:
-    description: "there is no post with such an ID or an incorrect ID has been entered"
+    description: "there is no post with such an ID"
     content:
-      plaintext:  # Необходимо доработать возврат ошибок в виде json
+      application/json:
         schema:
-          Error:
-            message: string
+          $ref: "#/components/schemas/Error"

@@ -50,7 +50,7 @@ class PostService:
         post = self.repository.get_by_id(post_id)
 
         if post is None:
-            raise NotFound()
+            raise NotFound({"msg": "Post with given id not found"})
 
         post.assign_request(args)
         self.repository.update(post)
@@ -65,9 +65,9 @@ class PostService:
 
         self.repository.delete(post_id)
 
-    def get_page(self, args: dict[str, int]) -> list[Post]:
+    def get_page(self, args: dict[str, str]) -> list[Post]:
         self.get_page_validate_service.validate(args)
         return self.repository.get_page(
-            args.get("page"),
-            args.get("page_size")
+            int(args.get("page")),
+            int(args.get("page_size"))
         )

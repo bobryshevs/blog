@@ -15,18 +15,19 @@ from exceptions import (
 )
 
 
-post = Blueprint('post', __name__)
+post = Blueprint("post", __name__)
 
 
-@post.route('/')
+@post.route("/")
+@swag_from("./yml_views/get_post_page.yml")
 def get_post_page():
-    page = request.args.get('page', default=1, type=int)
-    page_size = request.args.get('page_size', defalut=10, type=int)
+    page = request.args.get("page", default=1, type=int)
+    page_size = request.args.get("page_size", default=10, type=int)
     try:
         post_obj_list = post_service.get_page(
             {
-                'page': page,
-                'page_size': page_size
+                "page": page,
+                "page_size": page_size
             }
         )
     except BadRequest as err:
@@ -36,11 +37,11 @@ def get_post_page():
     return jsonify(posts), 200
 
 
-@post.route('/<id>', methods=['GET'])
-@swag_from('./yml_views/get_post_by_id.yml')
+@post.route("/<id>", methods=["GET"])
+@swag_from("./yml_views/get_post_by_id.yml")
 def get_post_by_id(id: str):
     try:
-        post = post_service.get_by_id({'id': id})
+        post = post_service.get_by_id({"id": id})
     except NotFound as err:
         return jsonify(err.value), 404
     except BadRequest as err:
@@ -49,21 +50,21 @@ def get_post_by_id(id: str):
     return post_presenter.to_json(post), 200
 
 
-@post.route('/<id>', methods=["DELETE"])
+@post.route("/<id>", methods=["DELETE"])
 @swag_from("./yml_views/delete_post_by_id.yml")
 def delete_post_by_id(id: str):
     try:
-        post_service.delete({'id': id})
+        post_service.delete({"id": id})
     except NotFound as err:
         return jsonify(err.value), 404
     except BadRequest as err:
         return jsonify(err.value), 400
 
-    return '', 204
+    return "", 204
 
 
-@post.route('/', methods=['POST'])
-@swag_from('./yml_views/create_post.yml')
+@post.route("/", methods=["POST"])
+@swag_from("./yml_views/create_post.yml")
 def create_post():
     try:
         post = post_service.create(request.json)
@@ -73,14 +74,14 @@ def create_post():
     return post_presenter.to_json(post), 200
 
 
-@post.route('/<id>', methods=['PUT'])
+@post.route("/<id>", methods=["PUT"])
+@swag_from("./yml_views/update_post.yml")
 def update_post(id: str):
-    fields = request.json | {'id': id}
+    fields = request.json | {"id": id}
     try:
         upd_post = post_service.update(fields)
     except BadRequest as err:
         return jsonify(err.value), 400
     except NotFound as err:
         return jsonify(err.value), 404
-
     return post_presenter.to_json(upd_post), 200

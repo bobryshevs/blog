@@ -26,11 +26,15 @@ services:
     ports:
       - "6379:6379"
   
-  blog:
-    image: "blog"
-    ports:
-      - 9003
-    depends_on: 
-      - mongo
-      - rmq
-      - redis
+  # blog:
+  #   image: "blog"
+  #   ports:
+  #     - 9003
+  #   environment: 
+  #     volumes: 
+  #       ./docker_env:/blog/.env
+  #   depends_on: 
+  #     - mongo
+  #     - rmq
+  #     - redis
+  #   restart: always

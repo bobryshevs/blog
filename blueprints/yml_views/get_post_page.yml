@@ -1,0 +1,31 @@
+tags:
+  - "post"
+summary: "This endpoint returns an array of posts when paging is used."
+parameters:
+  - in: "query"
+    name: "page"
+    description: "Page number to get"
+    required: true
+    schema:
+      type: integer
+  - in: "query"
+    name: "page_size"
+    description: "The size of the page into which many posts will be split"
+    required: true
+    schema:
+      type: integer
+responses:
+  200:
+    description: "all ok"
+    content:
+      application/json:
+        schema:
+          type: "array"
+          items:
+            $ref: "#components/schemas/Post"
+  400:
+    description: "Incorrect value page or page_size"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Error"

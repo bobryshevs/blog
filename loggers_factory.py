@@ -21,3 +21,6 @@ class LoggersFactory:
 
         if obj_name in self.special_classes:
             return self.base  # Todo: define special logger
+
+
+loggers_factory = LoggersFactory()

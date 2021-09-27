@@ -1,6 +1,6 @@
-from flask import Flask, render_template
-from flasgger import Swagger
 from blueprints import post, comment
+from flasgger import Swagger
+from flask import Flask, render_template
 
 
 # Constants
@@ -25,4 +25,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port=9003)
+    app.run(debug=True, host='0.0.0.0', port=9003)

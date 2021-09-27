@@ -6,6 +6,33 @@ info:
 
 components:
   schemas:
+    PostPageRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+    UpdatePost:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        author_id:
+          type: string
+
+    CreatePost:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        author_id:
+          type: string
+
     Error:
       type: object
       properties:

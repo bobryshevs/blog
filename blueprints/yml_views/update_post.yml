@@ -1,0 +1,35 @@
+tags:
+  - "post"
+summary: "Update post"
+parameters:
+  - name: "id"
+    in: "path"
+    description: "The post id that needs to be updated"
+    required: true
+    schema:
+      type: string
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "#/components/schemas/UpdatePost"
+responses:
+  200:
+    description: "all ok"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Post"
+  400:
+    description: "Incorrect data"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Error"
+  404:
+    description: "Not found post with given id"
+    content:
+      application/json:
+        schema:
+          $ref: "#/components/schemas/Error"

@@ -83,7 +83,7 @@ logger_config = {
                          "base_info_file_handler"]
         },
         "base_warning_logger": {
-            "level": "WARNIG",
+            "level": "WARNING",
             "handlers": ["base_warning_console_handler",
                          "base_warning_file_handler"]
         },

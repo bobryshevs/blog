@@ -102,13 +102,9 @@ comment_presenter = CommentPresenter()
 presence_page_validator = PresenceValidator(key="page")
 presence_page_size_vaidator = PresenceValidator(key="page_size")
 
-type_page_validator = TypeValidator(key="page", type_=str)
-type_page_size_validator = TypeValidator(key="page_size", type_=str)
+type_page_validator = TypeValidator(key="page", type_=int)
+type_page_size_validator = TypeValidator(key="page_size", type_=int)
 
-int_representable_page_validator = IntRepresentableValidator(
-    key="page")
-int_representable_page_size_validator = IntRepresentableValidator(
-    "page_size")
 positive_int_page_validator = PositiveIntValidator("page")
 positive_int_page_size_validator = PositiveIntValidator(
     "page_size")
@@ -157,8 +153,6 @@ get_page_validate_service = ValidateService(
         presence_page_size_vaidator,
         type_page_validator,
         type_page_size_validator,
-        int_representable_page_validator,
-        int_representable_page_size_validator,
         positive_int_page_validator,
         positive_int_page_size_validator
     ]

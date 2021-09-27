@@ -14,9 +14,6 @@ class TestPostRepository:
             translator=PostTranslator())
         self.collection = self.repository.collection
 
-    def teardown(self):
-        pass
-
     def test_get_by_id_without_post(self):
         post_id = ObjectId()
         self.collection.find_one.return_value = None

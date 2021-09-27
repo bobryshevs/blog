@@ -10,5 +10,5 @@ class TypeValidator():
 
     def error(self) -> str:
         return \
-            f"Error in [{self.key}]. Given value doesn't instance" \
-            "of {self.value_type}"
+            f"Error in [{self.key}]. Given value doesn't instance " \
+            f"of {self.value_type}"
