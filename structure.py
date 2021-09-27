@@ -1,5 +1,4 @@
 
-import redis
 from dotenv import dotenv_values
 from pika import (
     PlainCredentials,
@@ -46,19 +45,6 @@ MONGO_PASSWORD = config["MONGO_PASSWORD"]
 
 mongo_client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@"
                            f"{MONGO_HOST}:{MONGO_PORT}")
-
-
-#  --- Redis --- #
-REDIS_HOST = config["REDIS_HOST"]
-REDIS_PORT = config["REDIS_PORT"]
-DB_NUMBER = 0
-
-redis_obj = redis.Redis(
-    host=REDIS_HOST,
-    port=REDIS_PORT,
-    db=DB_NUMBER
-)
-
 
 # --- RabbitMQ --- #
 RMQ_USERNAME = config["RABBITMQ_DEFAULT_USER"]

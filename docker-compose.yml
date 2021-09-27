@@ -19,13 +19,6 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-  redis:
-    image: "redis:alpine"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - "6379:6379"
-  
   blog:
     image: "blog"
     ports:
@@ -33,5 +26,4 @@ services:
     depends_on: 
       - mongo
       - rmq
-      - redis
     restart: always
