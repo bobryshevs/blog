@@ -1,5 +1,5 @@
-
-backend:
+services = backend mongo rabbitmq
+build:
 	docker-compose build
 
 up: backend
@@ -7,3 +7,6 @@ up: backend
 
 tests: up
 	docker exec -it backend python -m pytest
+
+stop:
+	docker stop $(services)

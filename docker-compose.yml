@@ -13,7 +13,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
   rabbit_mq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
+    container_name: rabbit_mq
     ports:
       - "5672:5672"
       - "15672:15672"
