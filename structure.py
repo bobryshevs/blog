@@ -7,23 +7,22 @@ from pika import (
 )
 
 from json_serializers import JsonPostSerializer
-from services.comment_service import CommentService
 from pymongo import MongoClient
 from repositories import (
     PostRepository,
-    CommentRepository
+    UserRepository
 )
 from translators import (
     PostTranslator,
-    CommentTranslator,
-    post_tranlator
+    UserTranslator
 )
 from presenters import (
     PostPresenter,
-    CommentPresenter
+    UserPresenter
 )
 from services import (
     PostService,
+    UserService,
     ValidateService
 )
 from validators import (
@@ -66,24 +65,24 @@ json_post_serializer = JsonPostSerializer()
 
 # --- Translators --- #
 post_tranlator = PostTranslator()
+user_translator = UserTranslator()
 
 # --- Repositories --- #
 post_repository = PostRepository(
     collection=mongo_client.blog_database.posts,
     translator=post_tranlator
 )
-comment_repository = CommentRepository(
-    collection=mongo_client.blog_data_base.comments,
-    translator=CommentTranslator())
-
+user_repository = UserRepository(
+    collection=mongo_client.blog_database.users,
+    translator=user_translator
+)
 
 # --- Presenters --- #
 post_presenter = PostPresenter()
-comment_presenter = CommentPresenter()
-
+user_presenter = UserPresenter()
 # --- Validarots --- #
 
-# // post_get_page \\ #
+# / post_get_page \\ #
 presence_page_validator = PresenceValidator(key="page")
 presence_page_size_vaidator = PresenceValidator(key="page_size")
 
@@ -94,7 +93,7 @@ positive_int_page_validator = PositiveIntValidator("page")
 positive_int_page_size_validator = PositiveIntValidator(
     "page_size")
 
-# // post_create \\ #
+# / post_create \\ #
 presence_title_validator = PresenceValidator(key="title")
 presence_author_id_validator = PresenceValidator(key="author_id")
 presence_content_validator = PresenceValidator(key="content")
@@ -108,7 +107,7 @@ content_author_id_validator = StrLenValidator(key="author")
 
 object_id_author_id_validator = ObjectIdValidator(key="author_id")
 
-# // post_get_by_id \\ #
+# / post_get_by_id \\ #
 presence_id_validator = PresenceValidator(key="id")
 
 type_str_id_validator = TypeValidator(key="id", type_=str)
@@ -116,7 +115,7 @@ type_str_id_validator = TypeValidator(key="id", type_=str)
 object_id_validator = ObjectIdValidator(key="id")
 
 
-# // post_update \\ #
+# / post_update \\ #
 
 # presense, type, content of "post_id"
 # checked with validators from post_get_by_id
@@ -125,13 +124,44 @@ object_id_validator = ObjectIdValidator(key="id")
 # from post_create
 
 
-# // post_delete \\ #
+# / post_delete \\ #
 
 # presense, type, content of "post_id"
 # checked with validators from post_get_by_id
 
 
+# / users create validators \\ #
+presence_email_validator = PresenceValidator(key="email")
+presence_password_validator = PresenceValidator(key="password")
+presence_first_name_validator = PresenceValidator(key="first_name")
+presence_last_name_validator = PresenceValidator(key="last_name")
+
+
+type_email_validator = TypeValidator(key="email", type_=str)
+type_password_validator = TypeValidator(key="password", type_=str)
+type_first_name_validator = TypeValidator(key="first_name", type_=str)
+type_last_name_validator = TypeValidator(key="last_name", type_=str)
+
+
 # --- Validator Services --- #
+
+# /* User Validate Services \* #
+create_user_validate_service = ValidateService(
+    [
+        presence_email_validator,
+        presence_password_validator,
+        presence_first_name_validator,
+        presence_last_name_validator,
+
+        type_email_validator,
+        type_password_validator,
+        type_first_name_validator,
+        type_last_name_validator
+    ]
+)
+
+
+# /* Post Validate Services \* #
 get_page_validate_service = ValidateService(
     [
         presence_page_validator,
@@ -175,7 +205,6 @@ post_update_validator_service = ValidateService(
         content_title_validator,
         object_id_author_id_validator,
         object_id_validator
-
     ]
 )
 
@@ -186,4 +215,8 @@ post_service = PostService(post_repository,
                            object_id_validate_service,
                            post_update_validator_service,
                            )
-comment_service = CommentService(comment_repository, post_repository)
+
+user_service = UserService(
+    repository=user_repository,
+    create_validate_service=create_user_validate_service
+)

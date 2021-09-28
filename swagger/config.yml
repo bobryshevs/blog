@@ -6,6 +6,27 @@ info:
 
 components:
   schemas:
+    GetUser:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    CreateUser:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+
     PostPageRequest:
       type: object
       properties:
@@ -13,15 +34,6 @@ components:
           type: integer
         page_size:
           type: integer
-    UpdatePost:
-      type: object
-      properties:
-        title:
-          type: string
-        content:
-          type: string
-        author_id:
-          type: string
 
     CreatePost:
       type: object
@@ -33,12 +45,15 @@ components:
         author_id:
           type: string
 
-    Error:
+    UpdatePost:
       type: object
       properties:
-        msg:
+        title:
           type: string
-
+        content:
+          type: string
+        author_id:
+          type: string
     Post:
       type: object
       properties:
@@ -54,3 +69,9 @@ components:
           type: array
           items:
             type: string
+
+    Error:
+      type: object
+      properties:
+        msg:
+          type: string

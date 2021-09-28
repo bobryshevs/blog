@@ -6,7 +6,7 @@ class User(Model):
     def __init__(self) -> None:
         self.id: ObjectId = None
         self.email: str = None
-        self.password_hash: str = None
+        self.password_hash: bytes = None
         self.first_name: str = None
         self.last_name: str = None
         self.access_token: str = None
@@ -17,7 +17,7 @@ class User(Model):
         # Todo: define the fields to be used
 
     @staticmethod
-    def from_request(self, args: dict) -> "User":
+    def from_request(args: dict) -> "User":
         user = User()
         user.email = args.get("email")
         user.password_hash = args.get("password_hash")

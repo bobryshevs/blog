@@ -1,0 +1,16 @@
+tags:
+  - "user"
+summary: "Create user with unique email"
+produces: ["application/json"]
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "#components/schemas/CreateUser"
+responses:
+  200:
+    content:
+      application/json:
+        schema:
+          $ref: "#components/schemas/GetUser"

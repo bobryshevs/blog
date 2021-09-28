@@ -1,7 +1,5 @@
 import pytest
-from pymongo import MongoClient
 from bson import ObjectId
-from datetime import datetime
 from translators import PostTranslator
 from models import Post
 
