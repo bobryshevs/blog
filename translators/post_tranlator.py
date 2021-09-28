@@ -1,6 +1,3 @@
-import json
-
-from bson.objectid import ObjectId
 from models import Post
 from .translator import Translator
 

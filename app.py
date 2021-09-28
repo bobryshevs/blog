@@ -13,7 +13,7 @@ app.config["SWAGGER"] = {
 }
 app.config["SWAGGER"]["openapi"] = "3.0.2"
 app.config['SECRET_KEY'] = "SECRET"
-swagger = Swagger(app, template_file='./swagger_config.yml')
+swagger = Swagger(app, template_file='./swagger/config.yml')
 
 app.register_blueprint(post, url_prefix='/posts')
 app.register_blueprint(comment, url_prefix='/comment')

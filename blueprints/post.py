@@ -19,7 +19,7 @@ post = Blueprint("post", __name__)
 
 
 @post.route("/")
-@swag_from("./yml_views/get_post_page.yml")
+@swag_from("../swagger/post/get_post_page.yml")
 def get_post_page():
     page = request.args.get("page", default=1, type=int)
     page_size = request.args.get("page_size", default=10, type=int)
@@ -38,7 +38,7 @@ def get_post_page():
 
 
 @post.route("/<id>", methods=["GET"])
-@swag_from("./yml_views/get_post_by_id.yml")
+@swag_from("../swagger/post/get_post_by_id.yml")
 def get_post_by_id(id: str):
     try:
         post = post_service.get_by_id({"id": id})
@@ -51,7 +51,7 @@ def get_post_by_id(id: str):
 
 
 @post.route("/<id>", methods=["DELETE"])
-@swag_from("./yml_views/delete_post_by_id.yml")
+@swag_from("../swagger/post/delete_post_by_id.yml")
 def delete_post_by_id(id: str):
     try:
         post_service.delete({"id": id})
@@ -64,7 +64,7 @@ def delete_post_by_id(id: str):
 
 
 @post.route("/", methods=["POST"])
-@swag_from("./yml_views/create_post.yml")
+@swag_from("../swagger/post/create_post.yml")
 def create_post():
     try:
         post = post_service.create(request.json)
@@ -75,7 +75,7 @@ def create_post():
 
 
 @post.route("/<id>", methods=["PUT"])
-@swag_from("./yml_views/update_post.yml")
+@swag_from("../swagger/post/update_post.yml")
 def update_post(id: str):
     fields = request.json | {"id": id}
     try:
