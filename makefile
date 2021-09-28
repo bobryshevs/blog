@@ -1,6 +1,9 @@
 
-blog:
-	docker build -t blog .
+backend:
+	docker-compose build
 
-start: blog
-	docker-compose up  --remove-orphans
+up: backend
+	docker-compose up  --remove-orphans -d
+
+tests: up
+	docker exec -it backend python -m pytest

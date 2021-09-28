@@ -31,7 +31,6 @@ from validators import (
     TypeValidator,
     ObjectIdValidator,
     PositiveIntValidator,
-    IntRepresentableValidator,
     StrLenValidator
 )
 
