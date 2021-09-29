@@ -1,15 +1,11 @@
-from math import exp
-from random import expovariate
-
-import py
 from exceptions.not_found import NotFound
 import pytest
 from bson.objectid import ObjectId
 from mock import Mock
 
 
-from services import PostService, post_service
-from models import Post, post
+from services import PostService
+from models import Post
 
 
 class TestPostService:

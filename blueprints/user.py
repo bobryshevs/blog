@@ -8,7 +8,7 @@ from structure import (
     user_presenter
 )
 from exceptions import (
-    NotFound,
+    Conflict,
     BadRequest
 )
 from flasgger import swag_from
@@ -22,5 +22,7 @@ def create():
     try:
         user = user_service.create(request.json)
     except BadRequest as err:
-        return jsonify(err.value), 400
+        return jsonify(err.value), err.code
+    except Conflict as err:
+        return jsonify(err.value), err.code
     return user_presenter.to_json(user), 200
