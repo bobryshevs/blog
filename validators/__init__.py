@@ -9,3 +9,4 @@ from .positive_int_validator import PositiveIntValidator
 from .str_len_validator import StrLenValidator
 
 from .email_validator import EmailValidator
+from .user_unique_field_validator import UserUniqueFieldValidator

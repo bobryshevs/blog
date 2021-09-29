@@ -1,11 +1,9 @@
-from exceptions.conflict import Conflict
-import bcrypt
 import pytest
 from bson import ObjectId
 from mock import Mock
 from services import UserService
 from models import User
-from exceptions import Conflict
+from exceptions import BadRequest
 
 
 class TestUserService:
@@ -47,7 +45,8 @@ class TestUserService:
             "first_name": "first_name",
             "last_name": "last_name"
         }
-        self.repository.create.return_value = None
-        with pytest.raises(Conflict):
+        bad_request = Mock(side_effect=BadRequest({"msg": "mock"}))
+        self.create_validate_service.validate = bad_request
+        with pytest.raises(BadRequest):
             self.user_service.create(args)
         self.create_validate_service.validate.assert_called_once_with(args)

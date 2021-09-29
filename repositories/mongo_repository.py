@@ -36,5 +36,12 @@ class MongoRepository:
             {"$set": self.translator.to_document(model)})
         return model
 
+    def get(self, name: str, value) -> Model:
+        # Todo: Test it
+        model = self.collection.find_one({name: value})
+        if not model:
+            return None
+        return self.translator.from_document(model)
+
     def exists(self, obj_id: ObjectId) -> bool:
         return self.get_by_id(obj_id) is not None

@@ -18,11 +18,7 @@ class UserService:
     def create(self, args: dict) -> User:
         self.create_validate_service.validate(args)
         args["password_hash"] = self.bcrypt_wrapper.gen_password_hash(
-                                                        args["password"])
+            args["password"])
         user = User.from_request(args)
-        created_id = self.repository.create(user)
-        if created_id is None:
-            raise Conflict(
-                {"msg": "A user with such mail already exists in the system"})
-        user.id = created_id
+        user.id = self.repository.create(user)
         return user

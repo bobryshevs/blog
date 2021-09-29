@@ -31,7 +31,8 @@ from validators import (
     ObjectIdValidator,
     PositiveIntValidator,
     StrLenValidator,
-    EmailValidator
+    EmailValidator,
+    UserUniqueFieldValidator
 )
 from wrappers import (
     BcryptWrapper
@@ -150,6 +151,9 @@ type_first_name_validator = TypeValidator(key="first_name", type_=str)
 type_last_name_validator = TypeValidator(key="last_name", type_=str)
 
 email_validator = EmailValidator(key="email")
+user_unique_email_validator = UserUniqueFieldValidator(
+    key="email",
+    repository=user_repository)
 
 # --- Validator Services --- #
 
@@ -166,7 +170,8 @@ create_user_validate_service = ValidateService(
         type_first_name_validator,
         type_last_name_validator,
 
-        email_validator
+        email_validator,
+        user_unique_email_validator
     ]
 )
 
