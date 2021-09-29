@@ -14,3 +14,13 @@ responses:
       application/json:
         schema:
           $ref: "#components/schemas/GetUser"
+  409:
+    content:
+      application/json:
+        schema:
+          $ref: "#components/schemas/Error"
+  400:
+    content:
+      application/json:
+        schema:
+          $ref: "#components/schemas/Error"

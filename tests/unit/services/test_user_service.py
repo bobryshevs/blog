@@ -13,23 +13,12 @@ class TestUserService:
     def setup(self):
         self.repository = Mock()
         self.create_validate_service = Mock()
+        self.bcrypt_wrapper = Mock()
         self.user_service = UserService(
             repository=self.repository,
+            bcrypt_wrapper=self.bcrypt_wrapper,
             create_validate_service=self.create_validate_service
         )
-
-    def test_add_password_hash(self):
-        args = {"password": "password"}
-        salt = bcrypt.gensalt()
-        self.user_service._gensalt = Mock()
-        self.user_service._gensalt.return_value = salt
-
-        self.user_service._add_password_hash(args)
-
-        assert isinstance(args, dict)
-        assert "password_hash" in args
-        assert bcrypt.hashpw(
-            args["password"].encode(), salt=salt) == args["password_hash"]
 
     def test_create_new_email(self):
         args = {

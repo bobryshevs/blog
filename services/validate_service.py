@@ -10,5 +10,9 @@ class ValidateService:
             if validator.valid(args):
                 continue
             raise BadRequest(
-                {"msg": validator.error()})
+                {
+                    "msg": validator.error(),
+                    "key": validator.key
+                }
+            )
         return True

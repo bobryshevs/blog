@@ -30,9 +30,12 @@ from validators import (
     TypeValidator,
     ObjectIdValidator,
     PositiveIntValidator,
-    StrLenValidator
+    StrLenValidator,
+    EmailValidator
 )
-
+from wrappers import (
+    BcryptWrapper
+)
 config = dotenv_values(".env")
 
 # --- Mongo --- #
@@ -59,6 +62,10 @@ rmq_connection = BlockingConnection(
     )
 )
 rmq_channel = rmq_connection.channel()
+
+# --- Wrappers --- #
+bcrypt_wrapper = BcryptWrapper()
+
 
 # --- JsonSerializers --- #
 json_post_serializer = JsonPostSerializer()
@@ -142,6 +149,7 @@ type_password_validator = TypeValidator(key="password", type_=str)
 type_first_name_validator = TypeValidator(key="first_name", type_=str)
 type_last_name_validator = TypeValidator(key="last_name", type_=str)
 
+email_validator = EmailValidator(key="email")
 
 # --- Validator Services --- #
 
@@ -156,7 +164,9 @@ create_user_validate_service = ValidateService(
         type_email_validator,
         type_password_validator,
         type_first_name_validator,
-        type_last_name_validator
+        type_last_name_validator,
+
+        email_validator
     ]
 )
 
@@ -218,5 +228,6 @@ post_service = PostService(post_repository,
 
 user_service = UserService(
     repository=user_repository,
+    bcrypt_wrapper=bcrypt_wrapper,
     create_validate_service=create_user_validate_service
 )
