@@ -1,5 +1,8 @@
 
-from structure import bcrypt_wrapper
+from structure import (
+    bcrypt_wrapper,
+    user_translator
+)
 from models import User
 
 
@@ -12,3 +15,7 @@ class UserFactory:
         user.first_name = "first_name"
         user.last_name = "last_name"
         return user
+
+    @staticmethod
+    def get_doc() -> dict:
+        return user_translator.to_document(UserFactory.get())
