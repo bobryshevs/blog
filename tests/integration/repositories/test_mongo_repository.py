@@ -41,7 +41,11 @@ class TestMongoRepository:
     def test_delete(self):
         self.model.id = self.repository.collection \
             .insert_one(self.document).inserted_id
-        self.repository.delete(self.model.id)
-        result = self.repository.collection.find_one({"_id": self.model.id})
 
-        assert result is None
+        assert self.repository.collection.find_one(
+            {"_id": self.model.id}) is not None
+
+        self.repository.delete(self.model.id)
+
+        assert self.repository.collection.find_one(
+            {"_id": self.model.id}) is None
