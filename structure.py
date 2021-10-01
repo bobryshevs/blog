@@ -10,7 +10,7 @@ from json_serializers import JsonPostSerializer
 from pymongo import MongoClient
 from repositories import (
     PostRepository,
-    UserRepository
+    UserRepository,
 )
 from translators import (
     PostTranslator,
