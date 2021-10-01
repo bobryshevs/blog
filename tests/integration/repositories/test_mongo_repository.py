@@ -49,3 +49,41 @@ class TestMongoRepository:
 
         assert self.repository.collection.find_one(
             {"_id": self.model.id}) is None
+
+    def test_update(self):
+        self.model.id = self.repository.collection \
+            .insert_one(self.document).inserted_id
+        old_field_value = self.model.field
+        new_field_value = "new_value"
+        self.model.field = new_field_value
+
+        inserted_field_value = self.repository.collection.find_one(
+            {"_id": self.model.id})["field"]
+        assert inserted_field_value == old_field_value
+
+        self.repository.update(self.model)
+
+        updated_field_value = self.repository.collection.find_one(
+            {"_id": self.model.id})["field"]
+        assert updated_field_value == new_field_value
+
+    def test_get_one_by_field(self):
+        repository = self.repository
+        collection = self.repository.collection
+        obj_id_list = []
+        args = [
+            {"first": 1, "field": "arg_1"},
+            {"second": 2, "field": "arg_2"},
+            {"third": 3, "field": "arg_3"},
+        ]
+        obj_id_list.append(collection.insert_one(args[0]).inserted_id)
+        obj_id_list.append(collection.insert_one(args[1]).inserted_id)
+        obj_id_list.append(collection.insert_one(args[2]).inserted_id)
+
+        model_1 = repository.get_one_by_field("first", 1)
+        model_2 = repository.get_one_by_field("second", 2)
+        model_3 = repository.get_one_by_field("third", 3)
+
+        assert model_1.id == obj_id_list[0]
+        assert model_2.id == obj_id_list[1]
+        assert model_3.id == obj_id_list[2]

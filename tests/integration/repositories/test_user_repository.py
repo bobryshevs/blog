@@ -13,7 +13,7 @@ class TestUserRepositoryExistsMethod:
         user_repository.collection.delete_many({})
 
     def test_exists_email_false(self):
-        email = "#..$(@"
+        email = "test_email@example.com"
         result = user_repository.exists_email(email)
 
         assert result is False
