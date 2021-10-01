@@ -32,7 +32,7 @@ from validators import (
     PositiveIntValidator,
     StrLenValidator,
     EmailValidator,
-    UserUniqueFieldValidator
+    UniqueFieldValidator
 )
 from wrappers import (
     BcryptWrapper
@@ -47,22 +47,6 @@ MONGO_PASSWORD = config["MONGO_PASSWORD"]
 
 mongo_client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@"
                            f"{MONGO_HOST}:{MONGO_PORT}")
-
-# --- RabbitMQ --- #
-RMQ_USERNAME = config["RABBITMQ_DEFAULT_USER"]
-RMQ_PASSWORD = config["RABBITMQ_DEFAULT_PASS"]
-RMQ_HOST = config["RABBITMQ_HOST"]
-rmq_credentials = PlainCredentials(
-    username=RMQ_USERNAME,
-    password=RMQ_PASSWORD
-)
-rmq_connection = BlockingConnection(
-    ConnectionParameters(
-        host=RMQ_HOST,
-        credentials=rmq_credentials
-    )
-)
-rmq_channel = rmq_connection.channel()
 
 # --- Wrappers --- #
 bcrypt_wrapper = BcryptWrapper()
@@ -151,7 +135,7 @@ type_first_name_validator = TypeValidator(key="first_name", type_=str)
 type_last_name_validator = TypeValidator(key="last_name", type_=str)
 
 email_validator = EmailValidator(key="email")
-user_unique_email_validator = UserUniqueFieldValidator(
+user_unique_email_validator = UniqueFieldValidator(
     key="email",
     repository=user_repository)
 

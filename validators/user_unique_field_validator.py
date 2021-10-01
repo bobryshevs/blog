@@ -1,16 +1,14 @@
-from repositories import UserRepository
+from repositories import MongoRepository
 
 
-class UserUniqueFieldValidator:
-    def __init__(self, key: str, repository: UserRepository) -> None:
+class UniqueFieldValidator:
+    def __init__(self, key: str, repository: MongoRepository) -> None:
         self.key: str = key
-        self.repository: UserRepository = repository
+        self.repository: MongoRepository = repository
 
     def valid(self, args: dict) -> bool:
-        user = self.repository.get(name=self.key, value=args["key"])
-        if user is not None:
-            return False
-        return True
+        user = self.repository.get_one_by_field(self.key, args[self.key])
+        return user is None
 
     def error(self) -> str:
         return f"Error in {self.key}. A user with such email already exists."

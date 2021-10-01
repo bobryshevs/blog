@@ -11,15 +11,6 @@ services:
     environment: 
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-  rabbit_mq:
-    image: rabbitmq:3-management-alpine
-    container_name: rabbit_mq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
   backend:
     build:
       context: ./
@@ -30,5 +21,4 @@ services:
       - "9003:9003"
     depends_on: 
       - mongo
-      - rabbit_mq 
     restart: always

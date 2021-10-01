@@ -4,6 +4,7 @@ from models import User
 
 
 class UserRepository(MongoRepository):
+
     def create(self, model: User) -> ObjectId:
         if self.exists_email(model.email):
             return None

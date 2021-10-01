@@ -36,9 +36,9 @@ class MongoRepository:
             {"$set": self.translator.to_document(model)})
         return model
 
-    def get(self, name: str, value) -> Model:
+    def get_one_by_field(self, field_name: str, value) -> Model:
         # Todo: Test it
-        model = self.collection.find_one({name: value})
+        model = self.collection.find_one({field_name: value})
         if not model:
             return None
         return self.translator.from_document(model)

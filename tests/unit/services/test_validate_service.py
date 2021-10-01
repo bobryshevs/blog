@@ -1,7 +1,7 @@
 import pytest
 from mock import Mock
 from exceptions import BadRequest
-from services import ValidateService, validate_service
+from services import ValidateService
 from structure import create_user_validate_service
 from loggers_factory import loggers_factory
 logger = loggers_factory.get()
