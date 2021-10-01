@@ -7,8 +7,7 @@ from models import User
 
 
 class UserFactory:
-    @staticmethod
-    def get() -> User:
+    def get(self) -> User:
         user = User()
         user.email = "unique_email@example.com"
         user.password_hash = bcrypt_wrapper.gen_password_hash("password")
@@ -16,6 +15,5 @@ class UserFactory:
         user.last_name = "last_name"
         return user
 
-    @staticmethod
-    def get_doc() -> dict:
-        return user_translator.to_document(UserFactory.get())
+    def get_doc(self) -> dict:
+        return user_translator.to_document(self.get())
