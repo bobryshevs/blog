@@ -17,7 +17,7 @@ class UserService:
 
     def create(self, args: dict) -> User:
         self.create_validate_service.validate(args)
-        args["password_hash"] = self.bcrypt_wrapper.gen_password_hash(
+        args["password_hash"] = self.bcrypt_wrapper.gen_passwd_hash(
             args["password"])
         user = User.from_request(args)
         user.id = self.repository.create(user)

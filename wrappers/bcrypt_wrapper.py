@@ -6,7 +6,7 @@ from bcrypt import (
 
 class BcryptWrapper:
 
-    def gen_password_hash(self, passwd: str, salt: bytes = None) -> bytes:
+    def gen_passwd_hash(self, passwd: str, salt: bytes = None) -> bytes:
         if salt is None:
             salt = self.gen_salt()
         return hashpw(passwd.encode(), salt)

@@ -12,7 +12,7 @@ class TestBcryptWrapper:
         wrapper.gen_salt = Mock()
         wrapper.gen_salt.return_value = salt
 
-        result = wrapper.gen_password_hash(password)
+        result = wrapper.gen_passwd_hash(password)
 
         assert isinstance(result, bytes)
         wrapper.gen_salt.assert_called_once()
@@ -23,7 +23,7 @@ class TestBcryptWrapper:
         salt = gensalt()
         wrapper = BcryptWrapper()
 
-        result = wrapper.gen_password_hash(password, salt)
+        result = wrapper.gen_passwd_hash(password, salt)
 
         assert isinstance(result, bytes)
         assert result == hashpw(password.encode(), salt)
