@@ -57,7 +57,7 @@ components:
     GetPostPageResponse:
       type: object
       properties:
-        items:
+        "items":
           type: "array"
           items:
             $ref: "#components/schemas/Post"

@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           type: "object"
-          items:
-            $ref: "#components/schemas/GetPostPageResponse"
+          $ref: "#components/schemas/GetPostPageResponse"
   400:
     description: "Incorrect value page or page_size"
     content:
