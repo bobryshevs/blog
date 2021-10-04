@@ -12,3 +12,10 @@ class UserRepository(MongoRepository):
 
     def exists_email(self, email: str) -> bool:
         return self.collection.find_one({"email": email}) is not None
+
+    def password_hash_verification(
+            self,
+            email: str,
+            password_hash: bytes) -> bool:
+        doc = self.collection.find_one({"email": email})
+        return password_hash == doc["password_hash"]

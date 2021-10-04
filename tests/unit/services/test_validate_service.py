@@ -2,7 +2,7 @@ import pytest
 from mock import Mock
 from exceptions import BadRequest
 from services import ValidateService
-from structure import create_user_validate_service
+from structure import user_create_validate_service
 from loggers_factory import loggers_factory
 logger = loggers_factory.get()
 
@@ -41,7 +41,7 @@ class TestCreateUserValidateService:
             "first_name": "first_name",
             "last_name": "last_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -57,7 +57,7 @@ class TestCreateUserValidateService:
             "first_name": "first_name",
             "last_name": "last_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -73,7 +73,7 @@ class TestCreateUserValidateService:
             "password": "password",
             "last_name": "last_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -89,7 +89,7 @@ class TestCreateUserValidateService:
             "password": "password",
             "first_name": "first_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -106,7 +106,7 @@ class TestCreateUserValidateService:
             "first_name": "first_name",
             "last_name": "last_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -122,7 +122,7 @@ class TestCreateUserValidateService:
             "first_name": "first_name",
             "last_name": "last_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -138,7 +138,7 @@ class TestCreateUserValidateService:
             "first_name": ("first_name",),
             "last_name": "last_name"
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)
@@ -154,7 +154,7 @@ class TestCreateUserValidateService:
             "first_name": "first_name",
             "last_name": {"last_name"}
         }
-        validate_service = create_user_validate_service
+        validate_service = user_create_validate_service
 
         with pytest.raises(BadRequest) as error:
             validate_service.validate(args)

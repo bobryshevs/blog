@@ -26,3 +26,12 @@ def create():
     except Conflict as err:
         return jsonify(err.value), err.code
     return user_presenter.to_json(user), 200
+
+
+@users.route("/login", methods=["POST"])
+def login():
+    try:
+        tockens: list[dict] = user_service.login(request.json)
+    except BadRequest as err:
+        return jsonify(err.value), err.code
+    return jsonify(tockens), 200

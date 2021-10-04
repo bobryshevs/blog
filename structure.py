@@ -139,10 +139,19 @@ user_unique_email_validator = UniqueFieldValidator(
     key="email",
     repository=user_repository)
 
+
+# / users login validators \\ #
+# * presence_email_validator defined in     "users create validators"
+# * presence_password_validator defined in  "users create validators"
+# * type_email_validator defined in         "users create validators"
+# * type_password_validator defined in      "users create validators"
+# * email_validator defined in              "users create validators"
+
+
 # --- Validator Services --- #
 
 # /* User Validate Services \* #
-create_user_validate_service = ValidateService(
+user_create_validate_service = ValidateService(
     [
         presence_email_validator,
         presence_password_validator,
@@ -159,6 +168,17 @@ create_user_validate_service = ValidateService(
     ]
 )
 
+user_login_validate_service = ValidateService(
+    [
+        presence_email_validator,
+        presence_password_validator,
+
+        type_email_validator,
+        type_password_validator,
+
+        email_validator
+    ]
+)
 
 # /* Post Validate Services \* #
 get_page_validate_service = ValidateService(
@@ -218,5 +238,6 @@ post_service = PostService(post_repository,
 user_service = UserService(
     repository=user_repository,
     bcrypt_wrapper=bcrypt_wrapper,
-    create_validate_service=create_user_validate_service
+    create_validate_service=user_create_validate_service,
+    login_validate_service=user_login_validate_service
 )
