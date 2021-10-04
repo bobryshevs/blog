@@ -23,7 +23,11 @@ class PostRepository(MongoRepository):
             "page": page,
             "page_size": page_size,
             #  Zero division is not allowed by the validator
-            "page_count": math.ceil(doc_count / page_size)
+            "page_count": self._calc_page_count(doc_count, page_size)
         }
 
         return page
+
+    def _calc_page_count(self, doc_count: int, page_size: int) -> int:
+        count = math.ceil(doc_count / page_size)
+        return count if count != 0 else 1

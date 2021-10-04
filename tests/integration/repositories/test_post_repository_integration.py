@@ -16,6 +16,7 @@ class TestPostRepositoryIntegration:
         self.collection.delete_many({})
         PAGE = 1
         PAGE_SIZE = 2
+        PAGE_COUNT = 1
 
         pages = self.repository.get_page(PAGE, PAGE_SIZE)
 
@@ -23,7 +24,7 @@ class TestPostRepositoryIntegration:
             "items": [],
             "page": PAGE,
             "page_size": PAGE_SIZE,
-            "page_count": 0
+            "page_count": 1
         }
 
     def test_get_page_first(self):
