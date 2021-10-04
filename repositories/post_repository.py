@@ -1,3 +1,5 @@
+import math
+
 from repositories.mongo_repository import MongoRepository
 from models import Post
 
@@ -15,4 +17,13 @@ class PostRepository(MongoRepository):
             for post in posts
             if post is not None
         ]
-        return posts
+        doc_count: int = self.collection.count_documents({})
+        page = {
+            "items": posts,
+            "page": page,
+            "page_size": page_size,
+            #  Zero division is not allowed by the validator
+            "page_count": math.ceil(doc_count / page_size)
+        }
+
+        return page

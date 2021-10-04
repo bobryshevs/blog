@@ -24,7 +24,7 @@ def get_post_page():
     page = request.args.get("page", default=1, type=int)
     page_size = request.args.get("page_size", default=10, type=int)
     try:
-        post_obj_list = post_service.get_page(
+        page = post_service.get_page(
             {
                 "page": page,
                 "page_size": page_size
@@ -33,8 +33,8 @@ def get_post_page():
     except BadRequest as err:
         return jsonify(err.value), 400
 
-    posts = [post_presenter.to_json(post) for post in post_obj_list]
-    return jsonify(posts), 200
+    page["items"] = [post_presenter.to_json(post) for post in page["items"]]
+    return jsonify(page), 200
 
 
 @post.route("/<id>", methods=["GET"])

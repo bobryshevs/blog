@@ -54,6 +54,19 @@ components:
           type: string
         author_id:
           type: string
+    GetPostPageResponse:
+      type: object
+      properties:
+        items:
+          type: "array"
+          items:
+            $ref: "#components/schemas/Post"
+        page:
+          type: integer
+        page_size:
+          type: integer
+        page_count:
+          type: integer
     Post:
       type: object
       properties:

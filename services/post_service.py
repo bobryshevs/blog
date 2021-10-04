@@ -65,7 +65,7 @@ class PostService:
 
         self.repository.delete(post_id)
 
-    def get_page(self, args: dict[str, str]) -> list[Post]:
+    def get_page(self, args: dict[str, str]) -> dict:
         self.get_page_validate_service.validate(args)
         return self.repository.get_page(
             int(args.get("page")),
