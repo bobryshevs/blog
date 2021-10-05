@@ -1,16 +1,8 @@
 import jwt
 
-from enum import IntEnum
 from time import time
 
-
-class TimeConstants(IntEnum):
-    SECOND = 1
-    MINUTE = 60
-    QUARTER_OF_AN_HOUR = 900
-    HOUR = 3600
-    DAY = 86400
-    MOUNTH = 2592000  # 30 days
+from enums import TokenType
 
 
 class JWTWrapper:
@@ -18,64 +10,46 @@ class JWTWrapper:
             self,
             encryption_algorithm: str,
             key: str,
-            token_config: dict) -> None:
-        """
-        Parameters
-        ----------
-        encryption_algorithm: str
-            Encryption algorithm name
+            access_token_expiration: int,
+            refresh_token_expiration: int) -> None:
 
-        key: str
-            encryption key
+        self.ENCRYPTION_ALGORITHM: str = encryption_algorithm
+        self.KEY: str = key
+        self.ACCESS_TOKEN_EXPIRATION: int = access_token_expiration
+        self.REGRESH_TOKEN_EXPIRATION: int = refresh_token_expiration
 
-        token_config: dict
-            must include:
-                iss: str
-                aud: str
-        """
-
-        self.encryption_algorithm: str = encryption_algorithm
-        self.key: str = key
-        self.token_config: dict = token_config
-
-    def decode_payload(self, token: str) -> dict:
-        return jwt.decode(
+    def decode(self, token: str) -> dict:
+        payload = jwt.decode(
             jwt=token,
-            key=self.key,
-            algorithms=[self.encryption_algorithm]
+            key=self.KEY,
+            algorithms=[self.ENCRYPTION_ALGORITHM]
+        )
+        return payload
+
+    def encode(self, token_type: TokenType, payload: dict) -> str:
+        self.set_service_params(
+            token_type=token_type,
+            payload=payload
         )
 
-    def emit_access_token(self, payload: dict) -> str:
-        self.set_access_token_params(payload)
-        return jwt.encode(
+        token = jwt.encode(
             payload=payload,
-            key=self.key,
-            algorithm=self.encryption_algorithm
-        )
+            key=self.KEY,
+            algorithm=self.ENCRYPTION_ALGORITHM)
 
-    def emit_refresh_token(self, payload: dict) -> str:
-        self.set_refresh_token_params(payload)
-        return jwt.encode(
-            payload=payload,
-            key=self.key,
-            algorithm=self.encryption_algorithm
-        )
+        return token
 
-    def set_access_token_params(self, payload: dict) -> None:
-        payload["exp"] = self.now() + TimeConstants.QUARTER_OF_AN_HOUR
-        self.set_service_params(payload)
+    def set_service_params(self, token_type: TokenType, payload: dict):
+        payload = payload if payload else {}
+        NOW = self.now()
+        if token_type == TokenType.ACCESS:
+            payload["exp"] = NOW + self.ACCESS_TOKEN_EXPIRATION
+            payload["purpose"] = "access"
 
-    def set_refresh_token_params(self, payload: dict) -> None:
-        payload["exp"] = self.now() + TimeConstants.MOUNTH
-        self.set_service_params(payload)
-
-    def set_service_params(self, payload: dict) -> None:
-        now: int = self.now()
-
-        payload["nbf"] = now
-        payload["iat"] = now
-        payload["iss"] = self.token_config.get("iss")
-        payload["aud"] = self.token_config.get("aud")
+        if token_type == TokenType.REFRESH:
+            payload["exp"] = NOW + self.REGRESH_TOKEN_EXPIRATION
+            payload["purpose"] = "refresh"
+        payload["iat"] = NOW
 
     def now(self) -> int:
         return int(time())
