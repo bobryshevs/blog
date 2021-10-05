@@ -44,3 +44,4 @@ class UserService:
 
         if is_right_password:
             # TODO: generate tokens and return using python_dict
+            pass

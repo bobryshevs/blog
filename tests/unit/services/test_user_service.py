@@ -11,11 +11,13 @@ class TestUserService:
     def setup(self):
         self.repository = Mock()
         self.create_validate_service = Mock()
+        self.login_validate_service = Mock()
         self.bcrypt_wrapper = Mock()
         self.user_service = UserService(
             repository=self.repository,
             bcrypt_wrapper=self.bcrypt_wrapper,
-            create_validate_service=self.create_validate_service
+            create_validate_service=self.create_validate_service,
+            login_validate_service=self.login_validate_service
         )
 
     def test_create_new_email(self):
