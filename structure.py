@@ -1,10 +1,5 @@
 
 from dotenv import dotenv_values
-from pika import (
-    PlainCredentials,
-    BlockingConnection,
-    ConnectionParameters
-)
 
 from json_serializers import JsonPostSerializer
 from pymongo import MongoClient
@@ -18,7 +13,8 @@ from translators import (
 )
 from presenters import (
     PostPresenter,
-    UserPresenter
+    UserPresenter,
+    TockenPairPresenter
 )
 from services import (
     PostService,
@@ -35,8 +31,11 @@ from validators import (
     UniqueFieldValidator
 )
 from wrappers import (
-    BcryptWrapper
+    BcryptWrapper,
+    JWTWrapper
 )
+from enums import TimeConstants
+
 config = dotenv_values(".env")
 
 # --- Mongo --- #
@@ -50,6 +49,12 @@ mongo_client = MongoClient(f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@"
 
 # --- Wrappers --- #
 bcrypt_wrapper = BcryptWrapper()
+jwt_wrapper = JWTWrapper(
+    encryption_algorithm=config["JWT_ENCRYPTION_ALGORITHM"],
+    key=config["JWT_KEY"],
+    access_token_expiration=TimeConstants.QUARTER_OF_AN_HOUR,
+    refresh_token_expiration=TimeConstants.MOUNTH
+)
 
 
 # --- JsonSerializers --- #
@@ -72,6 +77,7 @@ user_repository = UserRepository(
 # --- Presenters --- #
 post_presenter = PostPresenter()
 user_presenter = UserPresenter()
+token_pair_presenter = TockenPairPresenter()
 # --- Validarots --- #
 
 # / post_get_page \\ #
@@ -134,7 +140,7 @@ type_password_validator = TypeValidator(key="password", type_=str)
 type_first_name_validator = TypeValidator(key="first_name", type_=str)
 type_last_name_validator = TypeValidator(key="last_name", type_=str)
 
-email_validator = EmailValidator(key="email")
+correct_email_validator = EmailValidator(key="email")
 user_unique_email_validator = UniqueFieldValidator(
     key="email",
     repository=user_repository)
@@ -163,7 +169,7 @@ user_create_validate_service = ValidateService(
         type_first_name_validator,
         type_last_name_validator,
 
-        email_validator,
+        correct_email_validator,
         user_unique_email_validator
     ]
 )
@@ -176,7 +182,7 @@ user_login_validate_service = ValidateService(
         type_email_validator,
         type_password_validator,
 
-        email_validator
+        correct_email_validator
     ]
 )
 
@@ -238,6 +244,7 @@ post_service = PostService(post_repository,
 user_service = UserService(
     repository=user_repository,
     bcrypt_wrapper=bcrypt_wrapper,
+    jwt_wrapper=jwt_wrapper,
     create_validate_service=user_create_validate_service,
     login_validate_service=user_login_validate_service
 )

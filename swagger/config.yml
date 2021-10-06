@@ -6,6 +6,20 @@ info:
 
 components:
   schemas:
+    LoginResponse:
+      type: object
+      properties:
+        access:
+          type: string
+        refresh:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
     GetUser:
       type: object
       properties:

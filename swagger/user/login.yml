@@ -1,0 +1,22 @@
+tags:
+  - "user"
+summary: "Return tokens if correct email and password"
+produces: ["application/json"]
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: "#components/schemas/LoginRequest"
+
+responses:
+  200:
+    content:
+      application/json:
+        schema:
+          $ref: "#components/schemas/LoginResponse"
+  400:
+    content:
+      application/json:
+        schema:
+          $ref: "#components/schemas/Error"

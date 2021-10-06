@@ -1,6 +1,14 @@
-from wrappers import BcryptWrapper
+from enums import TokenType
+from wrappers import (
+    BcryptWrapper,
+    JWTWrapper
+)
+from models import (
+    User,
+    TokenPair
+)
 from repositories import UserRepository
-from models import User
+from exceptions import BadRequest
 from .validate_service import ValidateService
 
 
@@ -8,13 +16,15 @@ class UserService:
     def __init__(self,
                  repository: UserRepository,
                  bcrypt_wrapper: BcryptWrapper,
+                 jwt_wrapper: JWTWrapper,
                  create_validate_service: ValidateService,
                  login_validate_service: ValidateService
                  ) -> None:
         self.repository: UserRepository = repository
-        self.create_validate_service = create_validate_service
-        self.login_validate_service = login_validate_service
-        self.bcrypt_wrapper = bcrypt_wrapper
+        self.create_validate_service: ValidateService = create_validate_service
+        self.login_validate_service: ValidateService = login_validate_service
+        self.bcrypt_wrapper: BcryptWrapper = bcrypt_wrapper,
+        self.jwt_wrapper: JWTWrapper = jwt_wrapper
 
     def create(self, args: dict) -> User:
         self.create_validate_service.validate(args)
@@ -24,12 +34,12 @@ class UserService:
         user.id = self.repository.create(user)
         return user
 
-    def login(self, args: dict) -> User:
+    def login(self, args: dict) -> TokenPair:
         """
         Parameters
         ----------
         args: dict[str, str]
-            login: str
+            email: str
             password: str
         """
 
@@ -37,11 +47,31 @@ class UserService:
         args["password_hash"] = self.bcrypt_wrapper \
             .gen_passwd_hash(args["password"])
 
-        is_right_password: bool = self.repository.password_hash_verification(
-            email=args["email"],
-            password_hash=args["password_hash"]
+        user: User = self.repository.get_one_by_field(
+            field_name="email",
+            value=args["email"]
         )
 
-        if is_right_password:
-            # TODO: generate tokens and return using python_dict
-            pass
+        if user is None:
+            raise BadRequest(value={"msg": "User with given email no exists"})
+
+        if user.password_hash != args["password_hash"]:
+            raise BadRequest(value={"msg": "Wrong password"})
+
+        token_pair: TokenPair = TokenPair(
+            access=self.jwt_wrapper.encode(
+                token_type=TokenType.ACCESS,
+                payload={"id": str(user.id)}
+            ),
+            refresh=self.jwt_wrapper.encode(
+                token_type=TokenType.REFRESH,
+                payload={"id": str(user.id)}
+            )
+        )
+
+        user.access_token = TokenPair.access
+        user.refresh_token = TokenPair.refresh
+
+        self.repository.update(user)
+
+        return token_pair

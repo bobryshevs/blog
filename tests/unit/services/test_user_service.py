@@ -1,6 +1,6 @@
 import pytest
 from bson import ObjectId
-from mock import Mock
+from mock import Mock, MagicMock
 from services import UserService
 from models import User
 from exceptions import BadRequest
@@ -12,10 +12,12 @@ class TestUserService:
         self.repository = Mock()
         self.create_validate_service = Mock()
         self.login_validate_service = Mock()
-        self.bcrypt_wrapper = Mock()
+        self.bcrypt_wrapper = MagicMock()
+        self.jwt_wrapper = Mock()
         self.user_service = UserService(
             repository=self.repository,
             bcrypt_wrapper=self.bcrypt_wrapper,
+            jwt_wrapper=self.jwt_wrapper,
             create_validate_service=self.create_validate_service,
             login_validate_service=self.login_validate_service
         )
@@ -30,6 +32,7 @@ class TestUserService:
         expected_id = ObjectId()
         self.repository.create.return_value = expected_id
         self.create_validate_service.validate.return_value = True
+        self.bcrypt_wrapper.gen_passwd_hash.return_value = "123"
 
         result = self.user_service.create(args)
 

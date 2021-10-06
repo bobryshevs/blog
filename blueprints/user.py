@@ -3,16 +3,17 @@ from flask import (
     request,
     jsonify
 )
+from flasgger import swag_from
+
 from structure import (
     user_service,
-    user_presenter
+    user_presenter,
+    token_pair_presenter
 )
 from exceptions import (
     Conflict,
     BadRequest
 )
-from flasgger import swag_from
-
 users = Blueprint("users", __name__)
 
 
@@ -29,9 +30,10 @@ def create():
 
 
 @users.route("/login", methods=["POST"])
+@swag_from("../swagger/user/login.yml")
 def login():
     try:
-        tockens: list[dict] = user_service.login(request.json)
+        tockens = user_service.login(request.json)
     except BadRequest as err:
         return jsonify(err.value), err.code
-    return jsonify(tockens), 200
+    return jsonify(token_pair_presenter.to_json(tockens)), 200
