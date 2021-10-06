@@ -75,10 +75,9 @@ class UserService:
             )
         )
 
-        user.access_token = token_pair.access
-        user.refresh_token = token_pair.refresh
-        logger.debug(user.access_token)
-        logger.debug(user.refresh_token)
+        user.access_tokens.append(token_pair.access)
+        user.refresh_tokens.append(token_pair.refresh)
+
         self.repository.update(user)
 
         return token_pair

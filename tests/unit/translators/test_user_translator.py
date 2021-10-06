@@ -28,8 +28,8 @@ class TestUserTranslator:
             "password_hash": b"password_hash",
             "first_name": "first_name",
             "last_name": "last_name",
-            "access_token": "access_token",
-            "refresh_token": "refresh_token"
+            "access_token": [],
+            "refresh_token": []
         }
 
         model = translator.from_document(document)
@@ -40,5 +40,5 @@ class TestUserTranslator:
         assert model.password_hash == document.get("password_hash")
         assert model.first_name == document.get("first_name")
         assert model.last_name == document.get("last_name")
-        assert model.access_token == document.get("access_token")
-        assert model.refresh_token == document.get("refresh_token")
+        assert model.access_tokens == document.get("access_token")
+        assert model.refresh_tokens == document.get("refresh_token")

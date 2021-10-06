@@ -9,8 +9,8 @@ class User(Model):
         self.password_hash: bytes = None
         self.first_name: str = None
         self.last_name: str = None
-        self.access_token: str = None
-        self.refresh_token: str = None
+        self.access_tokens: list[str] = None
+        self.refresh_tokens: list[str] = None
 
     def assign_request(self, args: dict) -> None:
         ...
