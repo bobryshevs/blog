@@ -23,7 +23,7 @@ class UserService:
         self.repository: UserRepository = repository
         self.create_validate_service: ValidateService = create_validate_service
         self.login_validate_service: ValidateService = login_validate_service
-        self.bcrypt_wrapper: BcryptWrapper = bcrypt_wrapper,
+        self.bcrypt_wrapper: BcryptWrapper = bcrypt_wrapper
         self.jwt_wrapper: JWTWrapper = jwt_wrapper
 
     def create(self, args: dict) -> User:
