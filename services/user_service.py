@@ -10,6 +10,9 @@ from models import (
 from repositories import UserRepository
 from exceptions import BadRequest
 from .validate_service import ValidateService
+from loggers_factory import loggers_factory
+
+logger = loggers_factory.get()
 
 
 class UserService:
@@ -44,8 +47,6 @@ class UserService:
         """
 
         self.login_validate_service.validate(args)
-        args["password_hash"] = self.bcrypt_wrapper \
-            .gen_passwd_hash(args["password"])
 
         user: User = self.repository.get_one_by_field(
             field_name="email",
@@ -55,7 +56,12 @@ class UserService:
         if user is None:
             raise BadRequest(value={"msg": "User with given email no exists"})
 
-        if user.password_hash != args["password_hash"]:
+        is_right_passwd: bool = self.bcrypt_wrapper.check_passwd(
+            passwd=args["password"],
+            passwd_hash=user.password_hash
+        )
+
+        if not is_right_passwd:
             raise BadRequest(value={"msg": "Wrong password"})
 
         token_pair: TokenPair = TokenPair(
@@ -69,9 +75,10 @@ class UserService:
             )
         )
 
-        user.access_token = TokenPair.access
-        user.refresh_token = TokenPair.refresh
-
+        user.access_token = token_pair.access
+        user.refresh_token = token_pair.refresh
+        logger.debug(user.access_token)
+        logger.debug(user.refresh_token)
         self.repository.update(user)
 
         return token_pair

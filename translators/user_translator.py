@@ -9,6 +9,8 @@ class UserTranslator(Translator):
             "password_hash": user.password_hash,
             "first_name": user.first_name,
             "last_name": user.last_name,
+            "access_token": user.access_token,
+            "refresh_token": user.refresh_token
         }
 
     def from_document(self, data: dict) -> User:
