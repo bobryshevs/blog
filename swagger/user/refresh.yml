@@ -1,14 +1,13 @@
 tags:
   - "user"
-summary: "Return tokens if correct email and password"
+summary: "Return tokens if valid refresh token"
 produces: ["application/json"]
 requestBody:
   required: true
   content:
     application/json:
       schema:
-        $ref: "#components/schemas/LoginRequest"
-
+        $ref: "#components/schemas/RefreshRequest"
 responses:
   200:
     content:

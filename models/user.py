@@ -1,5 +1,6 @@
 from bson import ObjectId
 from .model import Model
+from .token_pair import TokenPair
 
 
 class User(Model):
@@ -9,8 +10,7 @@ class User(Model):
         self.password_hash: bytes = None
         self.first_name: str = None
         self.last_name: str = None
-        self.access_tokens: list[str] = None
-        self.refresh_tokens: list[str] = None
+        self.tokens: list[TokenPair] = None
 
     def assign_request(self, args: dict) -> None:
         ...

@@ -1,3 +1,4 @@
+from bson.objectid import ObjectId
 from enums import TokenType
 from wrappers import (
     BcryptWrapper,
@@ -8,7 +9,10 @@ from models import (
     TokenPair
 )
 from repositories import UserRepository
-from exceptions import BadRequest
+from exceptions import (
+    BadRequest,
+    Unauthorized
+)
 from .validate_service import ValidateService
 from loggers_factory import loggers_factory
 
@@ -21,11 +25,14 @@ class UserService:
                  bcrypt_wrapper: BcryptWrapper,
                  jwt_wrapper: JWTWrapper,
                  create_validate_service: ValidateService,
-                 login_validate_service: ValidateService
+                 login_validate_service: ValidateService,
+                 refresh_validate_service: ValidateService
                  ) -> None:
         self.repository: UserRepository = repository
         self.create_validate_service: ValidateService = create_validate_service
         self.login_validate_service: ValidateService = login_validate_service
+        self.refresh_validate_service: ValidateService
+        self.refresh_validate_service = refresh_validate_service
         self.bcrypt_wrapper: BcryptWrapper = bcrypt_wrapper
         self.jwt_wrapper: JWTWrapper = jwt_wrapper
 
@@ -75,9 +82,57 @@ class UserService:
             )
         )
 
-        user.access_tokens.append(token_pair.access)
-        user.refresh_tokens.append(token_pair.refresh)
+        user.tokens.append(token_pair)
 
         self.repository.update(user)
 
         return token_pair
+
+    def refresh(self, args: dict):
+        """
+        Parameters
+        ----------
+        args: dict
+            refresh: str
+                refresh token
+        """
+        self.refresh_validate_service.validate(args)
+
+        refresh = args["refresh"]
+        user_id: str = self.jwt_wrapper.decode(refresh).get("id")
+        if user_id is None:
+            raise Unauthorized({"msg": "no id found in token"})
+
+        user: User = self.repository.get_by_id(ObjectId(user_id))
+
+        if not self.find_and_remove_token_pair(user=user, refresh=refresh):
+            raise Unauthorized({"msg": "token expired"})
+
+        token_pair: TokenPair = TokenPair(
+            access=self.jwt_wrapper.encode(
+                token_type=TokenType.ACCESS,
+                payload={"id": str(user.id)}
+            ),
+            refresh=self.jwt_wrapper.encode(
+                token_type=TokenType.REFRESH,
+                payload={"id": str(user.id)}
+            )
+        )
+
+        user.tokens.append(token_pair)
+
+        self.repository.update(user)
+
+        return token_pair
+
+    def find_and_remove_token_pair(self, user: User, refresh: str) -> bool:
+        """
+        Returns
+            True: token pair was found and removed
+            False: token pair is not in the collection
+        """
+        for index, token_pair in enumerate(user.tokens):
+            if token_pair.refresh == refresh:
+                del user.tokens[index]
+                return True
+        return False

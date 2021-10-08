@@ -1,4 +1,4 @@
-import pytest
+from models.token_pair import TokenPair
 from translators import UserTranslator
 from models import User
 
@@ -28,8 +28,7 @@ class TestUserTranslator:
             "password_hash": b"password_hash",
             "first_name": "first_name",
             "last_name": "last_name",
-            "access_token": [],
-            "refresh_token": []
+            "tokens": [{"access": "123456789", "refresh": "123456789"}]
         }
 
         model = translator.from_document(document)
@@ -40,5 +39,7 @@ class TestUserTranslator:
         assert model.password_hash == document.get("password_hash")
         assert model.first_name == document.get("first_name")
         assert model.last_name == document.get("last_name")
-        assert model.access_tokens == document.get("access_token")
-        assert model.refresh_tokens == document.get("refresh_token")
+        assert model.tokens[0] == TokenPair(
+            access=document["tokens"][0]["access"],
+            refresh=document["tokens"][0]["refresh"]
+        )

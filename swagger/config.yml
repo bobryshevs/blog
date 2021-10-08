@@ -6,13 +6,20 @@ info:
 
 components:
   schemas:
-    LoginResponse:
+    RefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+
+    TokenPair:
       type: object
       properties:
         access:
           type: string
         refresh:
           type: string
+
     LoginRequest:
       type: object
       properties:
@@ -20,6 +27,7 @@ components:
           type: string
         password:
           type: string
+
     GetUser:
       type: object
       properties:
@@ -29,6 +37,7 @@ components:
           type: string
         last_name:
           type: string
+
     CreateUser:
       type: object
       properties:
@@ -40,6 +49,7 @@ components:
           type: string
         last_name:
           type: string
+
 
     PostPageRequest:
       type: object

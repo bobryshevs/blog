@@ -1,4 +1,4 @@
-from models import User
+from models import User, TokenPair
 from .translator import Translator
 
 
@@ -9,8 +9,7 @@ class UserTranslator(Translator):
             "password_hash": user.password_hash,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "access_tokens": user.access_tokens,
-            "refresh_tokens": user.refresh_tokens
+            "tokens": self.to_doc_tokens(user)
         }
 
     def from_document(self, data: dict) -> User:
@@ -20,17 +19,23 @@ class UserTranslator(Translator):
         user.password_hash = data.get("password_hash")
         user.first_name = data.get("first_name")
         user.last_name = data.get("last_name")
-        user.access_tokens = self.__get_tokens(
-            tokens_key="access_tokens",
-            data=data
-        )
-        user.refresh_tokens = self.__get_tokens(
-            tokens_key="refresh_tokens",
-            data=data
-        )
+        user.tokens = self.from_doc_tokens(data)
 
         return user
 
-    def __get_tokens(self, tokens_key: str, data: dict) -> list[str]:
-        tokens = data.get(tokens_key)
-        return tokens if tokens is not None else []
+    def to_doc_tokens(self, user: User) -> list[dict[str, str]]:
+        if user.tokens is None:
+            return []
+
+        return [token.json() for token in user.tokens]
+
+    def from_doc_tokens(self, data: dict) -> list[TokenPair]:
+        data["tokens"] = data["tokens"] if data["tokens"] is not None else []
+        result = [
+            TokenPair(
+                access=token["access"],
+                refresh=token["refresh"]
+            )
+            for token in data["tokens"]
+        ]
+        return result

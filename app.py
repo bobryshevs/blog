@@ -1,11 +1,12 @@
+import json
 from blueprints import post, users
 from flasgger import Swagger
-from flask import Flask, render_template
-
-
+from flask import Flask, render_template, jsonify
+from werkzeug.exceptions import HTTPException
+from loggers_factory import loggers_factory
 # Constants
 
-
+logger = loggers_factory.get()
 app = Flask(__name__)
 app.config["SWAGGER"] = {
     "title": "SviatAPI",
@@ -24,5 +25,15 @@ def index():
     return render_template("base.html", title="Custom Title", menu=["Posts"])
 
 
+# @app.errorhandler(Exception)
+# @app.errorhandler(HTTPException)
+# def handle_exception(e):
+#     logger.warning("Inside_handle_exception")
+#     logger.warning(str(e))
+#     return jsonify({"error": str(e)}), 500
+
+
+# app.register_error_handler(500, handle_exception)
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=9003)
+    app.run(debug=False, host="0.0.0.0", port=9003)

@@ -28,7 +28,8 @@ from validators import (
     PositiveIntValidator,
     StrLenValidator,
     EmailValidator,
-    UniqueFieldValidator
+    UniqueFieldValidator,
+    JWTValidator
 )
 from wrappers import (
     BcryptWrapper,
@@ -153,6 +154,12 @@ user_unique_email_validator = UniqueFieldValidator(
 # * type_password_validator defined in      "users create validators"
 # * email_validator defined in              "users create validators"
 
+# / users refresh validators \\ #
+presence_refresh_validator = PresenceValidator(key="refresh")
+refresh_jwt_validator = JWTValidator(
+    dict_key="refresh",
+    encryption_key=config["JWT_KEY"]
+)
 
 # --- Validator Services --- #
 
@@ -183,6 +190,13 @@ user_login_validate_service = ValidateService(
         type_password_validator,
 
         correct_email_validator
+    ]
+)
+
+user_refresh_validate_service = ValidateService(
+    [
+        presence_refresh_validator,
+        refresh_jwt_validator
     ]
 )
 
@@ -246,5 +260,6 @@ user_service = UserService(
     bcrypt_wrapper=bcrypt_wrapper,
     jwt_wrapper=jwt_wrapper,
     create_validate_service=user_create_validate_service,
-    login_validate_service=user_login_validate_service
+    login_validate_service=user_login_validate_service,
+    refresh_validate_service=user_refresh_validate_service
 )
