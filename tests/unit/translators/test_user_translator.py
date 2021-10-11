@@ -43,3 +43,4 @@ class TestUserTranslator:
             access=document["tokens"][0]["access"],
             refresh=document["tokens"][0]["refresh"]
         )
+

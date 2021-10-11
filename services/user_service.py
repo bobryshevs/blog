@@ -6,7 +6,7 @@ from wrappers import (
 )
 from models import (
     User,
-    TokenPair
+    TokenPair,
 )
 from repositories import UserRepository
 from exceptions import (
@@ -15,6 +15,8 @@ from exceptions import (
 )
 from .validate_service import ValidateService
 from loggers_factory import loggers_factory
+from enums import TokenType
+
 
 logger = loggers_factory.get()
 
@@ -26,13 +28,14 @@ class UserService:
                  jwt_wrapper: JWTWrapper,
                  create_validate_service: ValidateService,
                  login_validate_service: ValidateService,
-                 refresh_validate_service: ValidateService
+                 refresh_validate_service: ValidateService,
+                 logout_validate_service: ValidateService
                  ) -> None:
         self.repository: UserRepository = repository
-        self.create_validate_service: ValidateService = create_validate_service
-        self.login_validate_service: ValidateService = login_validate_service
-        self.refresh_validate_service: ValidateService
+        self.create_validate_service = create_validate_service
+        self.login_validate_service = login_validate_service
         self.refresh_validate_service = refresh_validate_service
+        self.logout_validate_service = logout_validate_service
         self.bcrypt_wrapper: BcryptWrapper = bcrypt_wrapper
         self.jwt_wrapper: JWTWrapper = jwt_wrapper
 
@@ -52,7 +55,6 @@ class UserService:
             email: str
             password: str
         """
-
         self.login_validate_service.validate(args)
 
         user: User = self.repository.get_one_by_field(
@@ -83,9 +85,7 @@ class UserService:
         )
 
         user.tokens.append(token_pair)
-
         self.repository.update(user)
-
         return token_pair
 
     def refresh(self, args: dict):
@@ -94,18 +94,17 @@ class UserService:
         ----------
         args: dict
             refresh: str
-                refresh token
         """
         self.refresh_validate_service.validate(args)
-
         refresh = args["refresh"]
         user_id: str = self.jwt_wrapper.decode(refresh).get("id")
+
         if user_id is None:
             raise Unauthorized({"msg": "no id found in token"})
 
         user: User = self.repository.get_by_id(ObjectId(user_id))
 
-        if not self.find_and_remove_token_pair(user=user, refresh=refresh):
+        if not self.remove_token_pair(user, TokenType.REFRESH, refresh):
             raise Unauthorized({"msg": "token expired"})
 
         token_pair: TokenPair = TokenPair(
@@ -118,21 +117,44 @@ class UserService:
                 payload={"id": str(user.id)}
             )
         )
-
         user.tokens.append(token_pair)
+        self.repository.update(user)
+        return token_pair
+
+    def logout(self, args: dict[str, str]) -> bool:
+        """
+        Parameters
+        ----------
+        args: dict
+            access: str
+        """
+        self.logout_validate_service.validate(args)
+        access = args["access"]
+        user_id: str = self.jwt_wrapper.decode(access).get("id")
+        if user_id is None:
+            raise Unauthorized({"msg": "no id found in token"})
+
+        user: User = self.repository.get_by_id(ObjectId(user_id))
+        if user is None:
+            raise Unauthorized({"msg": "no user with given id"})
+
+        if not self.remove_token_pair(user, TokenType.ACCESS, access):
+            raise Unauthorized({"msg": "token expired"})
 
         self.repository.update(user)
 
-        return token_pair
-
-    def find_and_remove_token_pair(self, user: User, refresh: str) -> bool:
+    def remove_token_pair(
+            self,
+            user: User,
+            token_type: TokenType,
+            token: str) -> bool:
         """
         Returns
             True: token pair was found and removed
             False: token pair is not in the collection
         """
         for index, token_pair in enumerate(user.tokens):
-            if token_pair.refresh == refresh:
+            if token_pair.get_token_by_type(token_type) == token:
                 del user.tokens[index]
                 return True
         return False

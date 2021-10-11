@@ -161,6 +161,13 @@ refresh_jwt_validator = JWTValidator(
     encryption_key=config["JWT_KEY"]
 )
 
+# / users logout validators \\ #
+presence_access_validator = PresenceValidator(key="access")
+access_jwt_validator = JWTValidator(
+    dict_key="access",
+    encryption_key=config["JWT_KEY"]
+)
+
 # --- Validator Services --- #
 
 # /* User Validate Services \* #
@@ -190,6 +197,13 @@ user_login_validate_service = ValidateService(
         type_password_validator,
 
         correct_email_validator
+    ]
+)
+
+user_logout_validate_service = ValidateService(
+    [
+        presence_access_validator,
+        access_jwt_validator
     ]
 )
 
@@ -261,5 +275,6 @@ user_service = UserService(
     jwt_wrapper=jwt_wrapper,
     create_validate_service=user_create_validate_service,
     login_validate_service=user_login_validate_service,
-    refresh_validate_service=user_refresh_validate_service
+    refresh_validate_service=user_refresh_validate_service,
+    logout_validate_service=user_logout_validate_service
 )

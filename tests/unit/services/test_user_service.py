@@ -63,7 +63,7 @@ class TestUserService:
         user = User()
         user.tokens = []
 
-        result = self.user_service.find_and_remove_token_pair(
+        result = self.user_service.remove_token_pair(
             user=user,
             refresh="refresh_token"
         )
@@ -74,18 +74,18 @@ class TestUserService:
     def test_find_and_remove_token_pair_false(self):
         user = User()
         user.tokens = [
-            {
-                "access": "access_token_1",
-                "refresh": "refresh_token_1"
-            },
-            {
-                "access": "access_token_2",
-                "refresh": "refresh_token_2"
-            },
+            TokenPair(
+                access="access_token_1",
+                refresh="refresh_token_1"
+            ),
+            TokenPair(
+                access="access_token_2",
+                refresh="refresh_token_2"
+            ),
         ]
         start_len = len(user.tokens)
 
-        result = self.user_service.find_and_remove_token_pair(
+        result = self.user_service.remove_token_pair(
             user=user,
             refresh="refresh_token_3"
         )
@@ -96,22 +96,18 @@ class TestUserService:
     def test_find_and_remove_token_pair_false(self):
         user = User()
         user.tokens = [
-            {
-                "access": "access_token_1",
-                "refresh": "refresh_token_1"
-            },
-            {
-                "access": "access_token_2",
-                "refresh": "refresh_token_2"
-            },
-            {
-                "access": "access_token_3",
-                "refresh": "refresh_token_3"
-            },
+            TokenPair(
+                access="access_token_1",
+                refresh="refresh_token_1"
+            ),
+            TokenPair(
+                access="access_token_2",
+                refresh="refresh_token_2"
+            ),
         ]
         start_len = len(user.tokens)
 
-        result = self.user_service.find_and_remove_token_pair(
+        result = self.user_service.remove_token_pair(
             user=user,
             refresh="refresh_token_2"
         )
@@ -119,12 +115,8 @@ class TestUserService:
         assert result is True
         assert len(user.tokens) == start_len - 1
         assert user.tokens == [
-            {
-                "access": "access_token_1",
-                "refresh": "refresh_token_1"
-            },
-            {
-                "access": "access_token_3",
-                "refresh": "refresh_token_3"
-            },
+            TokenPair(
+                access="access_token_1",
+                refresh="refresh_token_1"
+            ),
         ]

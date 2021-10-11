@@ -13,8 +13,8 @@ responses:
   200:
     content:
       application/json:
-        schema:
-          $ref: "#components/schemas/TokenPair"
+        schema: {}  
+
   400:
     content:
       application/json:

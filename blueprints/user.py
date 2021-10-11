@@ -1,5 +1,6 @@
 from flask import (
     Blueprint,
+    json,
     request,
     jsonify
 )
@@ -12,7 +13,8 @@ from structure import (
 )
 from exceptions import (
     Conflict,
-    BadRequest
+    BadRequest,
+    Unauthorized
 )
 from models import (
     User,
@@ -50,4 +52,20 @@ def refresh():
         tokens: TokenPair = user_service.refresh(request.json)
     except BadRequest as err:
         return jsonify(err.value), err.code
+    except Unauthorized as err:
+        return jsonify(err.value), err.code
+
     return jsonify(token_pair_presenter.to_json(tokens)), 200
+
+
+@users.route("/logout", methods=["POST"])
+@swag_from("../swagger/user/logout.yml")
+def logout():
+    access = request.headers.get("Authorization").split(" ")[1]
+    try:
+        user_service.logout({"access": access})
+    except Unauthorized as err:
+        return jsonify(err.value), err.code
+    except BadRequest as err:
+        return jsonify(err.value), err.code
+    return jsonify({}), 200

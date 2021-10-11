@@ -5,6 +5,11 @@ info:
   version: 0.0.1
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     RefreshRequest:
       type: object
@@ -49,7 +54,6 @@ components:
           type: string
         last_name:
           type: string
-
 
     PostPageRequest:
       type: object
