@@ -1,8 +1,10 @@
 
+from bson.objectid import ObjectId
 from dotenv import dotenv_values
 
 from json_serializers import JsonPostSerializer
 from pymongo import MongoClient
+import presenters
 from repositories import (
     PostRepository,
     UserRepository,
@@ -36,6 +38,7 @@ from wrappers import (
     JWTWrapper
 )
 from enums import TimeConstants
+from handlers import FlaskHandler
 
 config = dotenv_values(".env")
 
@@ -98,7 +101,7 @@ presence_author_id_validator = PresenceValidator(key="author_id")
 presence_content_validator = PresenceValidator(key="content")
 
 type_title_validator = TypeValidator(key="title", type_=str)
-type_author_id_validator = TypeValidator(key="author_id", type_=str)
+type_author_id_validator = TypeValidator(key="author_id", type_=ObjectId)
 type_content_validator = TypeValidator(key="content", type_=str)
 
 content_title_validator = StrLenValidator(key="title")
@@ -165,6 +168,15 @@ refresh_jwt_validator = JWTValidator(
 presence_access_validator = PresenceValidator(key="access")
 access_jwt_validator = JWTValidator(
     dict_key="access",
+    encryption_key=config["JWT_KEY"]
+)
+
+
+# / token validators \ #
+presence_token_validator = PresenceValidator(key="token")
+type_token_validator = TypeValidator(key="token", type_=str)
+jwt_token_validator = JWTValidator(
+    dict_key="token",
     encryption_key=config["JWT_KEY"]
 )
 
@@ -261,6 +273,14 @@ post_update_validator_service = ValidateService(
     ]
 )
 
+token_validate_service = ValidateService(
+    [
+        presence_token_validator,
+        type_token_validator,
+        jwt_token_validator
+    ]
+)
+
 # --- Services --- #
 post_service = PostService(post_repository,
                            get_page_validate_service,
@@ -277,4 +297,14 @@ user_service = UserService(
     login_validate_service=user_login_validate_service,
     refresh_validate_service=user_refresh_validate_service,
     logout_validate_service=user_logout_validate_service
+)
+
+
+# - Handlers - #
+flask_handler = FlaskHandler(
+    jwt_wrapper=jwt_wrapper,
+    token_validate_service=token_validate_service,
+    post_service=post_service,
+    user_service=user_service,
+    post_presenter=post_presenter
 )

@@ -96,13 +96,8 @@ class UserService:
             refresh: str
         """
         self.refresh_validate_service.validate(args)
-        refresh = args["refresh"]
-        user_id: str = self.jwt_wrapper.decode(refresh).get("id")
-
-        if user_id is None:
-            raise Unauthorized({"msg": "no id found in token"})
-
-        user: User = self.repository.get_by_id(ObjectId(user_id))
+        refresh: str = args["refresh"]
+        user: User = self.get_by_token(refresh)
 
         if not self.remove_token_pair(user, TokenType.REFRESH, refresh):
             raise Unauthorized({"msg": "token expired"})
@@ -129,8 +124,16 @@ class UserService:
             access: str
         """
         self.logout_validate_service.validate(args)
-        access = args["access"]
-        user_id: str = self.jwt_wrapper.decode(access).get("id")
+        access: str = args["access"]
+        user: User = self.get_by_token(access)
+
+        if not self.remove_token_pair(user, TokenType.ACCESS, access):
+            raise Unauthorized({"msg": "token expired"})
+
+        self.repository.update(user)
+
+    def get_by_token(self, token: str) -> User:
+        user_id: str = self.jwt_wrapper.decode(token).get("id")
         if user_id is None:
             raise Unauthorized({"msg": "no id found in token"})
 
@@ -138,10 +141,7 @@ class UserService:
         if user is None:
             raise Unauthorized({"msg": "no user with given id"})
 
-        if not self.remove_token_pair(user, TokenType.ACCESS, access):
-            raise Unauthorized({"msg": "token expired"})
-
-        self.repository.update(user)
+        return user
 
     def remove_token_pair(
             self,

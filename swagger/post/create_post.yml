@@ -2,6 +2,10 @@ tags:
   - "post"
 summary: "Create post with given values"
 produces: ["application/json"]
+
+security:
+  - bearerAuth: []
+
 requestBody:
   required: true
   content:
@@ -19,16 +23,3 @@ responses:
       application/json:
         schema:
           $ref: "#/components/schemas/Error"
-  
-  # - name: "title"
-  #   in: body
-  #   description: "Title of the post being created."
-  #   required: true
-  #   schema:
-  #     type: string
-  # - name: "content"
-  #   in: body
-  #   description: "Content of the post being created."
-  #   required: true
-  #   schema:
-  #     type: string

@@ -13,3 +13,17 @@ class TimeConstants(IntEnum):
     HOUR = 3600
     DAY = 86400
     MOUNTH = 2592000  # 30 days
+
+
+class ActionType(IntEnum):
+    GET_POST_PAGE = 1
+    GET_POST_BY_ID = 2
+    DELETE_POST_BY_ID = 3
+    CREATE_POST = 4
+    UPDATE_POST = 5
+
+
+class HTTP_STATUS(IntEnum):
+    OK = 200
+    CREATED = 201
+    

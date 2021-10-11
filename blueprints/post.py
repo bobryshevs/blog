@@ -7,13 +7,14 @@ from flasgger import swag_from
 
 from structure import (
     post_presenter,
-    post_service
+    post_service,
+    flask_handler
 )
 from exceptions import (
     NotFound,
     BadRequest
 )
-
+from enums import ActionType
 
 post = Blueprint("post", __name__)
 
@@ -66,12 +67,7 @@ def delete_post_by_id(id: str):
 @post.route("/", methods=["POST"])
 @swag_from("../swagger/post/create_post.yml")
 def create_post():
-    try:
-        post = post_service.create(request.json)
-    except BadRequest as err:
-        return jsonify(err.value), 400
-
-    return post_presenter.to_json(post), 200
+    return flask_handler.handle(request, ActionType.CREATE_POST)
 
 
 @post.route("/<id>", methods=["PUT"])
