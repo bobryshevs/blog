@@ -23,6 +23,6 @@ class ActionType(IntEnum):
     UPDATE_POST = 5
 
 
-class HTTP_STATUS(IntEnum):
+class HTTPCode(IntEnum):
     OK = 200
     CREATED = 201

@@ -1,7 +1,7 @@
 from flask import Request, jsonify
 from enums import (
     ActionType,
-    HTTP_STATUS
+    HTTPCode
 )
 from exceptions import (
     BadRequest,
@@ -42,7 +42,7 @@ class CreatePostHandler:
         except (BadRequest, NotFound, Unauthorized, Conflict) as err:
             return jsonify(err.value), err.code
 
-    def handle_create_post(self, request: Request) -> tuple[dict, HTTP_STATUS]:
+    def handle_create_post(self, request: Request) -> tuple[dict, HTTPCode]:
         access_token: str = self.select_token_from_request(request)
         self.token_validate_service.validate({"token": access_token})
 
@@ -50,7 +50,7 @@ class CreatePostHandler:
         args: dict = request.json
         args["author_id"] = author.id
         post: Post = self.post_service.create(args)
-        return self.post_presenter.to_json(post), HTTP_STATUS.CREATED
+        return self.post_presenter.to_json(post), HTTPCode.CREATED
 
     def select_token_from_request(self, request: Request) -> str:
         bearer: str = request.headers.get("Authorization")
