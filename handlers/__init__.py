@@ -1,1 +1,1 @@
-from .flask_handler import FlaskHandler
+from .post_handlers import CreatePostHandler

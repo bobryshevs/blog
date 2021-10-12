@@ -26,4 +26,3 @@ class ActionType(IntEnum):
 class HTTP_STATUS(IntEnum):
     OK = 200
     CREATED = 201
-    

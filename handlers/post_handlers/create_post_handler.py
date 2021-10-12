@@ -22,7 +22,7 @@ from models import (
 )
 
 
-class FlaskHandler:
+class CreatePostHandler:
     def __init__(self,
                  jwt_wrapper: JWTWrapper,
                  token_validate_service: ValidateService,
@@ -33,16 +33,11 @@ class FlaskHandler:
         self.token_validate_service = token_validate_service
         self.user_service = user_service
         self.post_service = post_service
-
         self.post_presenter = post_presenter
-
-        self.action_type_to_func = {
-            ActionType.CREATE_POST: self.handle_create_post
-        }
 
     def handle(self, request, action_type: ActionType) -> tuple[dict, int]:
         try:
-            result, status = self.action_type_to_func[action_type](request)
+            result, status = self.handle_create_post(request)
             return jsonify(result), int(status)
         except (BadRequest, NotFound, Unauthorized, Conflict) as err:
             return jsonify(err.value), err.code

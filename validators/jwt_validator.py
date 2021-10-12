@@ -14,13 +14,13 @@ from jwt.exceptions import (
 
 class JWTValidator:
     def __init__(self, dict_key: str, encryption_key: str) -> None:
-        self.dict_key: str = dict_key
+        self.key: str = dict_key
         self.encryption_key: str = encryption_key
 
     def valid(self, args: dict) -> bool:
         try:
             jwt.decode(
-                args[self.dict_key],
+                args[self.key],
                 key=self.encryption_key,
                 algorithms=["HS256"]
             )
@@ -37,3 +37,7 @@ class JWTValidator:
         ):
             return False
         return True
+
+    def error(self) -> str:
+        return f"Error in [{self.key}]. Incorrect token was given"
+

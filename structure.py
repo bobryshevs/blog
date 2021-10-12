@@ -38,7 +38,7 @@ from wrappers import (
     JWTWrapper
 )
 from enums import TimeConstants
-from handlers import FlaskHandler
+from handlers import CreatePostHandler
 
 config = dotenv_values(".env")
 
@@ -301,7 +301,7 @@ user_service = UserService(
 
 
 # - Handlers - #
-flask_handler = FlaskHandler(
+flask_handler = CreatePostHandler(
     jwt_wrapper=jwt_wrapper,
     token_validate_service=token_validate_service,
     post_service=post_service,
