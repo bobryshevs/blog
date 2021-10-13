@@ -34,7 +34,7 @@ class BaseHandler:
             result, status = self.execute(request, principle)
             result = self.response_builder.build(
                 data=result,
-                status=status
+                status=int(status)  # Flask doesn't support enum cast inside
             )
         except (BadRequest, Conflict, NotFound, Unauthorized) as err:
             result = self.response_builder.build(

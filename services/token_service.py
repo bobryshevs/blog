@@ -1,7 +1,6 @@
 from models import User
 from wrappers import JWTWrapper
 from exceptions import (
-    Unauthorized,
     BadRequest
 )
 from .user_service import UserService
@@ -29,7 +28,8 @@ class TokenService:
         return principle
 
     def _get_token(self, headers: dict) -> str:
-        if bearer := headers.get("Authorization") is None:
+        bearer: str = headers.get("Authorization")
+        if bearer is None:
             return
 
         if not bearer.startswith("Bearer "):

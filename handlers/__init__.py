@@ -1,1 +1,1 @@
-from .post_handlers import CreatePostHandler
+from .post import CreatePostHandler

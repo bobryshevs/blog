@@ -4,7 +4,6 @@ from dotenv import dotenv_values
 
 from json_serializers import JsonPostSerializer
 from pymongo import MongoClient
-import presenters
 from repositories import (
     PostRepository,
     UserRepository,
@@ -21,7 +20,8 @@ from presenters import (
 from services import (
     PostService,
     UserService,
-    ValidateService
+    ValidateService,
+    TokenService
 )
 from validators import (
     PresenceValidator,
@@ -39,6 +39,7 @@ from wrappers import (
 )
 from enums import TimeConstants
 from handlers import CreatePostHandler
+from response_builder import ResponseBuilder
 
 config = dotenv_values(".env")
 
@@ -299,12 +300,23 @@ user_service = UserService(
     logout_validate_service=user_logout_validate_service
 )
 
+token_service = TokenService(
+    jwt_wrapper=jwt_wrapper,
+    user_service=user_service,
+    token_validate_service=token_validate_service
+)
+
+# -- RESPONSE BUILDERS -- #
+response_builder = ResponseBuilder()
 
 # - Handlers - #
-flask_handler = CreatePostHandler(
-    jwt_wrapper=jwt_wrapper,
-    token_validate_service=token_validate_service,
-    post_service=post_service,
-    user_service=user_service,
-    post_presenter=post_presenter
+
+# -- Post handlers -- #
+
+# ___ CREATE_POST_HANDLER ___ #
+create_post_handler = CreatePostHandler(
+    token_service=token_service,
+    service=post_service,
+    presenter=post_presenter,
+    response_builder=response_builder
 )

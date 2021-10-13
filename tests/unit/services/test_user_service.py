@@ -5,6 +5,7 @@ from models.token_pair import TokenPair
 from services import UserService
 from models import User
 from exceptions import BadRequest
+from enums import TokenType
 
 
 class TestUserService:
@@ -16,13 +17,15 @@ class TestUserService:
         self.refresh_validate_service = Mock()
         self.bcrypt_wrapper = MagicMock()
         self.jwt_wrapper = Mock()
+        self.logout_validate_service = Mock()
         self.user_service = UserService(
             repository=self.repository,
             bcrypt_wrapper=self.bcrypt_wrapper,
             jwt_wrapper=self.jwt_wrapper,
             create_validate_service=self.create_validate_service,
             login_validate_service=self.login_validate_service,
-            refresh_validate_service=self.refresh_validate_service
+            refresh_validate_service=self.refresh_validate_service,
+            logout_validate_service=self.logout_validate_service
         )
 
     def test_create_new_email(self):
@@ -65,8 +68,8 @@ class TestUserService:
 
         result = self.user_service.remove_token_pair(
             user=user,
-            refresh="refresh_token"
-        )
+            token_type=TokenType.REFRESH,
+            token="abracadabra")
 
         assert result is False
         assert user.tokens == []
@@ -87,7 +90,8 @@ class TestUserService:
 
         result = self.user_service.remove_token_pair(
             user=user,
-            refresh="refresh_token_3"
+            token_type=TokenType.REFRESH,
+            token="refresh_token_3"
         )
 
         assert result is False
@@ -109,7 +113,8 @@ class TestUserService:
 
         result = self.user_service.remove_token_pair(
             user=user,
-            refresh="refresh_token_2"
+            token_type=TokenType.REFRESH,
+            token="refresh_token_2"
         )
 
         assert result is True

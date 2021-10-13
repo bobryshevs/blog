@@ -23,6 +23,8 @@ class ActionType(IntEnum):
     UPDATE_POST = 5
 
 
-class HTTPCode(IntEnum):
+class HTTPStatus(IntEnum):
     OK = 200
     CREATED = 201
+
+    INTERNAL_SERVER_ERROR = 500
