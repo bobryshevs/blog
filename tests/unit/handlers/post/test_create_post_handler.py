@@ -1,6 +1,7 @@
 from mock import Mock
+from enums import HTTPStatus
 
-from handlers.base_handler import BaseHandler
+from handlers import CreatePostHandler
 
 
 class TestCreatePostHandler:
@@ -10,14 +11,16 @@ class TestCreatePostHandler:
         presenter = Mock()
         response_builder = Mock()
 
-        service_create_value = object()
-        service.create_return_value = service_create_value
+        service_create_value = Mock()
+        service.create.return_value = service_create_value
         request = Mock()
         request.json = {}
-        principle = object()
+        principle = Mock()
         principle.id = "id"
+        presenter.to_json.return_value = {}
+        expected_service_create_args = {} | {"author_id": "id"}
 
-        handler = BaseHandler(
+        handler = CreatePostHandler(
             token_service=token_service,
             service=service,
             presenter=presenter,
@@ -26,6 +29,6 @@ class TestCreatePostHandler:
 
         result = handler.execute(request, principle)
 
-        service.create.assert_called_once_with({} | {"author_id": "id"})
+        service.create.assert_called_once_with(expected_service_create_args)
         presenter.to_json.assert_called_once_with(service_create_value)
-        # TODO: presenter assert call
+        assert result == ({}, HTTPStatus.CREATED)

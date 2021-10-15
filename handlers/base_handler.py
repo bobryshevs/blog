@@ -39,7 +39,7 @@ class BaseHandler:
         except (BadRequest, Conflict, NotFound, Unauthorized) as err:
             result = self.response_builder.build(
                 data=err.value,
-                status=err.code
+                status=int(err.code)  # Flask doesn't support enum cast inside
             )
         return result
 
@@ -48,3 +48,11 @@ class BaseHandler:
         self,
         request: Request,
         principle: User) -> tuple[dict, HTTPStatus]: ...
+
+    def principle_check_none(self, principle):
+        if principle is None:
+            raise Unauthorized(
+                {
+                    "msg": "only an authorized user can perform this action"
+                }
+            )

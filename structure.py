@@ -38,7 +38,11 @@ from wrappers import (
     JWTWrapper
 )
 from enums import TimeConstants
-from handlers import CreatePostHandler
+from handlers import (
+    CreatePostHandler,
+    GetPostHandler,
+    DeletePostHandler
+)
 from response_builder import ResponseBuilder
 
 config = dotenv_values(".env")
@@ -254,7 +258,6 @@ create_validate_service = ValidateService(
 object_id_validate_service = ValidateService(
     [
         presence_id_validator,
-        type_str_id_validator,
         object_id_validator
     ]
 )
@@ -315,6 +318,22 @@ response_builder = ResponseBuilder()
 
 # ___ CREATE_POST_HANDLER ___ #
 create_post_handler = CreatePostHandler(
+    token_service=token_service,
+    service=post_service,
+    presenter=post_presenter,
+    response_builder=response_builder
+)
+
+# ___ GET_POST_HANDLER ___ #
+get_post_handler = GetPostHandler(
+    token_service=token_service,
+    service=post_service,
+    presenter=post_presenter,
+    response_builder=response_builder
+)
+
+# ___ DELETE_POST_HANDLER ___ #
+delete_post_handler = DeletePostHandler(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,

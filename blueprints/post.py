@@ -8,13 +8,14 @@ from flasgger import swag_from
 from structure import (
     post_presenter,
     post_service,
-    create_post_handler
+    create_post_handler,
+    get_post_handler,
+    delete_post_handler
 )
 from exceptions import (
     NotFound,
     BadRequest
 )
-from enums import ActionType
 
 post = Blueprint("post", __name__)
 
@@ -41,27 +42,21 @@ def get_post_page():
 @post.route("/<id>", methods=["GET"])
 @swag_from("../swagger/post/get_post_by_id.yml")
 def get_post_by_id(id: str):
-    try:
-        post = post_service.get_by_id({"id": id})
-    except NotFound as err:
-        return jsonify(err.value), 404
-    except BadRequest as err:
-        return jsonify(err.value), 400
-
-    return post_presenter.to_json(post), 200
+    return get_post_handler.handle(request)
 
 
 @post.route("/<id>", methods=["DELETE"])
 @swag_from("../swagger/post/delete_post_by_id.yml")
 def delete_post_by_id(id: str):
-    try:
-        post_service.delete({"id": id})
-    except NotFound as err:
-        return jsonify(err.value), 404
-    except BadRequest as err:
-        return jsonify(err.value), 400
+    return delete_post_handler.handle(request)
+    # try:
+    #     post_service.delete({"id": id})
+    # except NotFound as err:
+    #     return jsonify(err.value), 404
+    # except BadRequest as err:
+    #     return jsonify(err.value), 400
 
-    return "", 204
+    # return "", 204
 
 
 @post.route("/", methods=["POST"])
