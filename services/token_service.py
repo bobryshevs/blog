@@ -22,7 +22,6 @@ class TokenService:
         token: str = self._get_token(headers)
         if token is None:
             return
-
         self.token_validate_service.validate({"token": token})
         principle: User = self.user_service.get_by_token(token)
         return principle

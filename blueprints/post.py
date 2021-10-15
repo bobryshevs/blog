@@ -29,6 +29,7 @@ def get_post_by_id(id: str):
 @post.route("/<id>", methods=["DELETE"])
 @swag_from("../swagger/post/delete_post_by_id.yml")
 def delete_post_by_id(id: str):
+    print("inside blueprint", flush=True)
     return delete_post_handler.handle(request)
 
 

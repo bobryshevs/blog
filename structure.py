@@ -104,17 +104,13 @@ positive_int_page_size_validator = PositiveIntValidator(
 
 # / post_create \\ #
 presence_title_validator = PresenceValidator(key="title")
-presence_author_id_validator = PresenceValidator(key="author_id")
 presence_content_validator = PresenceValidator(key="content")
 
 type_title_validator = TypeValidator(key="title", type_=str)
-type_author_id_validator = TypeValidator(key="author_id", type_=ObjectId)
 type_content_validator = TypeValidator(key="content", type_=str)
 
 content_title_validator = StrLenValidator(key="title")
-content_author_id_validator = StrLenValidator(key="author")
 
-object_id_author_id_validator = ObjectIdValidator(key="author_id")
 
 # / post_get_by_id \\ #
 presence_id_validator = PresenceValidator(key="id")
@@ -247,14 +243,10 @@ get_page_validate_service = ValidateService(
 create_validate_service = ValidateService(
     [
         presence_title_validator,
-        presence_author_id_validator,
         presence_content_validator,
         type_title_validator,
-        type_author_id_validator,
         type_content_validator,
         content_title_validator,
-        content_author_id_validator,
-        object_id_author_id_validator
     ]
 )
 object_id_validate_service = ValidateService(
@@ -263,18 +255,14 @@ object_id_validate_service = ValidateService(
         object_id_validator
     ]
 )
-post_update_validator_service = ValidateService(
+post_update_validate_service = ValidateService(
     [
         presence_title_validator,
-        presence_author_id_validator,
         presence_id_validator,
         presence_content_validator,
-        type_author_id_validator,
         type_title_validator,
         type_content_validator,
-        content_author_id_validator,
         content_title_validator,
-        object_id_author_id_validator,
         object_id_validator
     ]
 )
@@ -288,12 +276,7 @@ token_validate_service = ValidateService(
 )
 
 # --- Services --- #
-post_service = PostService(post_repository,
-                           get_page_validate_service,
-                           create_validate_service,
-                           object_id_validate_service,
-                           post_update_validator_service,
-                           )
+
 
 user_service = UserService(
     repository=user_repository,
@@ -304,7 +287,14 @@ user_service = UserService(
     refresh_validate_service=user_refresh_validate_service,
     logout_validate_service=user_logout_validate_service
 )
-
+post_service = PostService(
+    repository=post_repository,
+    user_service=user_service,
+    get_page_validate_service=get_page_validate_service,
+    create_validate_service=create_validate_service,
+    object_id_validate_service=object_id_validate_service,
+    update_validate_service=post_update_validate_service,
+)
 token_service = TokenService(
     jwt_wrapper=jwt_wrapper,
     user_service=user_service,

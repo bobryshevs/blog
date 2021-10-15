@@ -17,7 +17,6 @@ from .validate_service import ValidateService
 from loggers_factory import loggers_factory
 from enums import TokenType
 
-
 logger = loggers_factory.get()
 
 

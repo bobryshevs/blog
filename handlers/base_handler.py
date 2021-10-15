@@ -10,7 +10,8 @@ from exceptions import (
     BadRequest,
     Conflict,
     NotFound,
-    Unauthorized
+    Unauthorized,
+    Forbidden
 )
 from models import User
 from enums import HTTPStatus
@@ -29,17 +30,17 @@ class BaseHandler:
         self.response_builder = response_builder
 
     def handle(self, request: Request) -> Response:
-        principle: User = self.token_service.get_principle(request.headers)
         try:
+            principle: User = self.token_service.get_principle(request.headers)
             result, status = self.execute(request, principle)
             result = self.response_builder.build(
                 data=result,
                 status=int(status)  # Flask doesn't support enum cast inside
             )
-        except (BadRequest, Conflict, NotFound, Unauthorized) as err:
+        except (BadRequest, Conflict, NotFound, Unauthorized, Forbidden) as e:
             result = self.response_builder.build(
-                data=err.value,
-                status=int(err.code)  # Flask doesn't support enum cast inside
+                data=e.value,
+                status=int(e.code)  # Flask doesn't support enum cast inside
             )
         return result
 
@@ -48,11 +49,3 @@ class BaseHandler:
         self,
         request: Request,
         principle: User) -> tuple[dict, HTTPStatus]: ...
-
-    def principle_check_none(self, principle):
-        if principle is None:
-            raise Unauthorized(
-                {
-                    "msg": "only an authorized user can perform this action"
-                }
-            )
