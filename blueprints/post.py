@@ -1,43 +1,23 @@
 from flask import (
     Blueprint,
     request,
-    jsonify,
 )
 from flasgger import swag_from
 
 from structure import (
-    post_presenter,
-    post_service,
     create_post_handler,
     get_post_handler,
     delete_post_handler,
-    update_post_handler
+    update_post_handler,
+    get_post_page_handler
 )
-from exceptions import (
-    NotFound,
-    BadRequest
-)
-
 post = Blueprint("post", __name__)
 
 
 @post.route("/")
 @swag_from("../swagger/post/get_post_page.yml")
 def get_post_page():
-    page = request.args.get("page", default=1, type=int)
-    page_size = request.args.get("page_size", default=10, type=int)
-    try:
-        page = post_service.get_page(
-            {
-                "page": page,
-                "page_size": page_size
-            }
-        )
-    except BadRequest as err:
-        return jsonify(err.value), 400
-
-    page["items"] = [post_presenter.to_json(post) for post in page["items"]]
-    return jsonify(page), 200
+    return get_post_page_handler.handle(request)
 
 
 @post.route("/<id>", methods=["GET"])

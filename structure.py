@@ -42,7 +42,8 @@ from handlers import (
     CreatePostHandler,
     GetPostHandler,
     DeletePostHandler,
-    UpdatePostHandler
+    UpdatePostHandler,
+    GetPostPageHanlder
 )
 from response_builder import ResponseBuilder
 
@@ -343,6 +344,14 @@ delete_post_handler = DeletePostHandler(
 
 # ___ UPDATE_POST_HANDLER ___ #
 update_post_handler = UpdatePostHandler(
+    token_service=token_service,
+    service=post_service,
+    presenter=post_presenter,
+    response_builder=response_builder
+)
+
+# ___ GET_POST_PAGE_HANDLER ___ #
+get_post_page_handler = GetPostPageHanlder(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,

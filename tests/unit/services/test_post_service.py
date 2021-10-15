@@ -76,8 +76,7 @@ class TestPostService:
         }
         expected_post = None
         post_service = PostService(*self.mock_arg_list)
-        post_service.repository.get_by_id.return_value = expected_post
-
+        post_service.repository.get_by_id.side_effect = NotFound
         with pytest.raises(NotFound):
             post_service.update(args)
 
