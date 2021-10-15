@@ -49,14 +49,6 @@ def get_post_by_id(id: str):
 @swag_from("../swagger/post/delete_post_by_id.yml")
 def delete_post_by_id(id: str):
     return delete_post_handler.handle(request)
-    # try:
-    #     post_service.delete({"id": id})
-    # except NotFound as err:
-    #     return jsonify(err.value), 404
-    # except BadRequest as err:
-    #     return jsonify(err.value), 400
-
-    # return "", 204
 
 
 @post.route("/", methods=["POST"])

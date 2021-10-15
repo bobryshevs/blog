@@ -9,3 +9,6 @@ tests: up
 
 down:
 	docker-compose down --remove-orphans
+
+unit:
+	pytest ./tests/unit

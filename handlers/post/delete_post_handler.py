@@ -10,8 +10,9 @@ class DeletePostHandler(BaseHandler):
     def execute(self,
                 request: Request,
                 principle: User) -> tuple[dict, HTTPStatus]:
-        post: Post = self.service.get_by_id(request.view_args)
+
         self.principle_check_none(principle)
+        post: Post = self.service.get_by_id(request.view_args)
         if principle.id != post.author_id:
             self._raise_forbidden()
 

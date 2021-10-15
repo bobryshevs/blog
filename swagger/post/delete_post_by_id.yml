@@ -8,6 +8,10 @@ parameters:
     required: true
     schema:
       type: string
+
+security:
+  - bearerAuth: []
+
 responses:
   204:
     description: "Successfeul operation"
