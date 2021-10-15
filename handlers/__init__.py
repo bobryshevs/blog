@@ -1,5 +1,6 @@
 from .post import (
     CreatePostHandler,
     GetPostHandler,
-    DeletePostHandler
+    DeletePostHandler,
+    UpdatePostHandler
 )

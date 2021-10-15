@@ -10,7 +10,8 @@ from structure import (
     post_service,
     create_post_handler,
     get_post_handler,
-    delete_post_handler
+    delete_post_handler,
+    update_post_handler
 )
 from exceptions import (
     NotFound,
@@ -60,11 +61,4 @@ def create_post():
 @post.route("/<id>", methods=["PUT"])
 @swag_from("../swagger/post/update_post.yml")
 def update_post(id: str):
-    fields = request.json | {"id": id}
-    try:
-        upd_post = post_service.update(fields)
-    except BadRequest as err:
-        return jsonify(err.value), 400
-    except NotFound as err:
-        return jsonify(err.value), 404
-    return post_presenter.to_json(upd_post), 200
+    return update_post_handler.handle(request)

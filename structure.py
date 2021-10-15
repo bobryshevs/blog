@@ -41,7 +41,8 @@ from enums import TimeConstants
 from handlers import (
     CreatePostHandler,
     GetPostHandler,
-    DeletePostHandler
+    DeletePostHandler,
+    UpdatePostHandler
 )
 from response_builder import ResponseBuilder
 
@@ -334,6 +335,14 @@ get_post_handler = GetPostHandler(
 
 # ___ DELETE_POST_HANDLER ___ #
 delete_post_handler = DeletePostHandler(
+    token_service=token_service,
+    service=post_service,
+    presenter=post_presenter,
+    response_builder=response_builder
+)
+
+# ___ UPDATE_POST_HANDLER ___ #
+update_post_handler = UpdatePostHandler(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,

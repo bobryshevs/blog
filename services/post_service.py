@@ -40,18 +40,13 @@ class PostService:
         post_id = ObjectId(args["id"])
         post = self.repository.get_by_id(post_id)
         if post is None:
-            raise NotFound()
-
+            raise NotFound({"msg": "post with given id not found"})
         return post
 
     def update(self, args: dict[str, str]) -> Post:
         self.update_validate_service.validate(args)
         post_id = ObjectId(args.get("id"))
         post = self.repository.get_by_id(post_id)
-
-        if post is None:
-            raise NotFound({"msg": "Post with given id not found"})
-
         post.assign_request(args)
         self.repository.update(post)
         return post
@@ -61,7 +56,7 @@ class PostService:
         post_id = ObjectId(args.get("id"))
 
         if not self.repository.exists(post_id):
-            raise NotFound()
+            raise NotFound({"msg": "post with given id not found"})
 
         self.repository.delete(post_id)
 
