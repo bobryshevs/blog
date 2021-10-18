@@ -15,8 +15,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    image: "backend"
-    container_name: backend
+    image: ${APP_NAME}
+    container_name: ${APP_NAME}
     ports:
       - "9003:9003"
     depends_on: 

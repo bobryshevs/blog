@@ -4,8 +4,8 @@ from .token_pair import TokenPair
 
 
 class User(Model):
-    def __init__(self) -> None:
-        self.id: ObjectId = None
+    def __init__(self, id: ObjectId = None) -> None:
+        self.id: ObjectId = id
         self.email: str = None
         self.password_hash: bytes = None
         self.first_name: str = None

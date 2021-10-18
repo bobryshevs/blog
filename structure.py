@@ -13,7 +13,8 @@ from translators import (
 from presenters import (
     PostPresenter,
     UserPresenter,
-    TockenPairPresenter
+    TockenPairPresenter,
+    PagePresenter
 )
 from services import (
     PostService,
@@ -41,7 +42,7 @@ from handlers import (
     GetPostHandler,
     DeletePostHandler,
     UpdatePostHandler,
-    GetPostPageHanlder,
+    GetPostPageHandler,
 
     CreateUserHandler,
     LoginHandler,
@@ -92,6 +93,8 @@ user_repository = UserRepository(
 post_presenter = PostPresenter()
 user_presenter = UserPresenter()
 token_pair_presenter = TockenPairPresenter()
+
+post_page_presenter = PagePresenter(item_presetner=post_presenter)
 # --- Validarots --- #
 
 # / post_get_page \\ #
@@ -316,7 +319,8 @@ create_post_handler = CreatePostHandler(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=200
 )
 
 # ___ GET_POST_HANDLER ___ #
@@ -324,7 +328,8 @@ get_post_handler = GetPostHandler(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=200
 )
 
 # ___ DELETE_POST_HANDLER ___ #
@@ -332,7 +337,8 @@ delete_post_handler = DeletePostHandler(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=204
 )
 
 # ___ UPDATE_POST_HANDLER ___ #
@@ -340,15 +346,17 @@ update_post_handler = UpdatePostHandler(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=200
 )
 
 # ___ GET_POST_PAGE_HANDLER ___ #
-get_post_page_handler = GetPostPageHanlder(
+get_post_page_handler = GetPostPageHandler(
     token_service=token_service,
     service=post_service,
-    presenter=post_presenter,
-    response_builder=response_builder
+    presenter=post_page_presenter,
+    response_builder=response_builder,
+    success_http_status_code=200
 )
 
 
@@ -359,23 +367,27 @@ create_user_handler = CreateUserHandler(
     token_service=token_service,
     service=user_service,
     presenter=user_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=201
 )
 login_handler = LoginHandler(
     token_service=token_service,
     service=user_service,
     presenter=token_pair_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=200
 )
 refresh_handler = RefreshHandler(
     token_service=token_service,
     service=user_service,
     presenter=token_pair_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=200
 )
 logout_handler = LogoutHandler(
     token_service=token_service,
     service=user_service,
     presenter=user_presenter,
-    response_builder=response_builder
+    response_builder=response_builder,
+    success_http_status_code=200
 )

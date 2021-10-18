@@ -1,15 +1,12 @@
 from flask import Request
 
-from models import User, TokenPair
-from enums import HTTPStatus
+from models import User
 from handlers.base_handler import BaseHandler
 from exceptions import Unauthorized
 
 
 class LogoutHandler(BaseHandler):
-    def execute(self,
-                request: Request,
-                principle: User) -> tuple[dict, HTTPStatus]:
+    def execute(self, request: Request, principle: User) -> None:
         if principle is None:
             raise Unauthorized({"msg": "login required"})
         access: str = request.headers["Authorization"].split(" ")[1]
@@ -17,4 +14,3 @@ class LogoutHandler(BaseHandler):
             "access": access,
             "principle": principle
         })
-        return {}, HTTPStatus.OK

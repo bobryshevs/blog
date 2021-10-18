@@ -13,8 +13,7 @@ from exceptions import (
     Unauthorized,
     Forbidden
 )
-from models import User
-from enums import HTTPStatus
+from models import User, Model
 
 
 class BaseHandler:
@@ -23,29 +22,29 @@ class BaseHandler:
             token_service,
             service,
             presenter,
-            response_builder) -> None:
+            response_builder,
+            success_http_status_code: int) -> None:
         self.token_service: TokenService = token_service
         self.service = service
         self.presenter = presenter
         self.response_builder = response_builder
+        self.success_http_status_code = success_http_status_code
 
     def handle(self, request: Request) -> Response:
         try:
             principle: User = self.token_service.get_principle(request.headers)
-            result, status = self.execute(request, principle)
+            result = self.execute(request, principle)
+            result = self.presenter.present(result) if result else {}
             result = self.response_builder.build(
                 data=result,
-                status=int(status)  # Flask doesn't support enum cast inside
+                status=self.success_http_status_code
             )
         except (BadRequest, Conflict, NotFound, Unauthorized, Forbidden) as e:
             result = self.response_builder.build(
                 data=e.value,
-                status=int(e.code)  # Flask doesn't support enum cast inside
+                status=e.code
             )
         return result
 
     @abstractmethod
-    def execute(
-        self,
-        request: Request,
-        principle: User) -> tuple[dict, HTTPStatus]: ...
+    def execute(self, request: Request, principle: User) -> Model: ...

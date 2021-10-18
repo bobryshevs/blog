@@ -1,14 +1,14 @@
 import math
 
 from repositories.mongo_repository import MongoRepository
-from models import Post
+from models import Post, Page
 
 
 class PostRepository(MongoRepository):
     def __init__(self, translator, collection):
         super().__init__(translator, collection)
 
-    def get_page(self, page: int, page_size: int) -> list[Post]:
+    def get_page(self, page: int, page_size: int) -> Page:
         posts = self.collection.find().sort('_id', -1) \
             .skip(page * page_size - page_size) \
             .limit(page_size)
@@ -18,15 +18,13 @@ class PostRepository(MongoRepository):
             if post is not None
         ]
         doc_count: int = self.collection.count_documents({})
-        page = {
-            "items": posts,
-            "page": page,
-            "page_size": page_size,
-            #  Zero division is not allowed by the validator
-            "page_count": self._calc_page_count(doc_count, page_size)
-        }
+        page_obj = Page()
+        page_obj.items = posts
+        page_obj.page = page
+        page_obj.page_size = page_size
+        page_obj.page_count = self._calc_page_count(doc_count, page_size)
 
-        return page
+        return page_obj
 
     def _calc_page_count(self, doc_count: int, page_size: int) -> int:
         count = math.ceil(doc_count / page_size)

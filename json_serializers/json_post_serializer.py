@@ -7,7 +7,7 @@ from json_serializers import JsonSerializer
 
 class JsonPostSerializer(JsonSerializer):
 
-    def to_json(self, post: Post) -> str:
+    def present(self, post: Post) -> str:
         return json.dumps(
             {
                 "_id": str(post.id),

@@ -6,7 +6,7 @@ from exceptions import (
     Forbidden
 )
 from repositories import PostRepository
-from models import Post, User
+from models import Post, User, Page
 from .user_service import UserService
 
 
@@ -53,7 +53,7 @@ class PostService:
         self.principle_check_none(principle)
         self.update_validate_service.validate(args)
 
-        post: Post = self.repository.get_by_id(args["id"])
+        post: Post = self.get_by_id(args["id"])
 
         if post.author_id != principle.id:
             msg = "You can't update a post that you aren't the author of"
@@ -76,7 +76,7 @@ class PostService:
 
         self.repository.delete(post.id)
 
-    def get_page(self, args: dict[str, str]) -> dict:
+    def get_page(self, args: dict[str, str]) -> Page:
         self.get_page_validate_service.validate(args)
         return self.repository.get_page(
             int(args.get("page")),

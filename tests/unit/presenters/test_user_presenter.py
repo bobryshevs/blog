@@ -4,14 +4,14 @@ from models import User
 
 
 class TestUserPresenter:
-    def test_to_json(self):
+    def test_present(self):
         presenter = UserPresenter()
         user = User()
         user.id = ObjectId()
         user.first_name = "first_name"
         user.last_name = "last_name"
 
-        result = presenter.to_json(user)
+        result = presenter.present(user)
 
         assert isinstance(result, dict)
         assert str(user.id) == result["id"]

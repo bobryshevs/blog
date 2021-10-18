@@ -21,17 +21,3 @@ class ActionType(IntEnum):
     DELETE_POST_BY_ID = 3
     CREATE_POST = 4
     UPDATE_POST = 5
-
-
-class HTTPStatus(IntEnum):
-    OK = 200
-    CREATED = 201
-    NO_CONTENT = 204
-
-    BAD_REQUEST = 400
-    UNAUTHORIZED = 401
-    FORBIDDEN = 403
-    NOT_FOUND = 404
-    CONFLICT = 409
-
-    INTERNAL_SERVER_ERROR = 500

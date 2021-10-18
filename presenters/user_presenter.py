@@ -1,9 +1,9 @@
 from models import User
+from .base_presenter import BasePresenter
 
 
-class UserPresenter:
-    def to_json(self, user: User) -> dict:
-        # Не отдаю фронту почту, так как может повлечь проблемы приватности
+class UserPresenter(BasePresenter):
+    def present(self, user: User) -> dict:
         return {
             "id": str(user.id),
             "first_name": user.first_name,

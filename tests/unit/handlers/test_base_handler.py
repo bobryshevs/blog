@@ -1,10 +1,17 @@
 from flask import Response
 from bson import ObjectId
 from mock import Mock
+import pytest
 
 from handlers.base_handler import BaseHandler
-from enums import HTTPStatus
 from models import User
+from exceptions import (
+    BadRequest,
+    Conflict,
+    NotFound,
+    Unauthorized,
+    Forbidden
+)
 
 
 class TestBaseHandler:
@@ -13,13 +20,13 @@ class TestBaseHandler:
         self.service = Mock()
         self.presenter = Mock()
         self.response_builder = Mock()
-        self.response_status = HTTPStatus.TEST
+        self.response_status = 1337
         self.handler = BaseHandler(
             token_service=self.token_service,
             service=self.service,
             presenter=self.presenter,
             response_builder=self.response_builder,
-            response_status=self.response_status
+            success_http_status_code=self.response_status
         )
 
     def test_handle(self):

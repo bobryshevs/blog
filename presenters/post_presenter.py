@@ -1,9 +1,10 @@
 from models import Post
+from .base_presenter import BasePresenter
 
 
 class PostPresenter:
 
-    def to_json(self, post: Post) -> dict:
+    def present(self, post: Post) -> dict:
         return {
             "id": str(post.id),
             "title": post.title,

@@ -1,12 +1,10 @@
 import json
 from flask import Response
 
-from enums import HTTPStatus
-
 
 class ResponseBuilder:
 
-    def build(self, data: dict, status: HTTPStatus) -> Response:
+    def build(self, data: dict, status: int) -> Response:
         response = Response(
             json.dumps(data),
             status=status,

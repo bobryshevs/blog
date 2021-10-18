@@ -3,7 +3,7 @@ from .post import (
     GetPostHandler,
     DeletePostHandler,
     UpdatePostHandler,
-    GetPostPageHanlder
+    GetPostPageHandler
 )
 
 from .user import (

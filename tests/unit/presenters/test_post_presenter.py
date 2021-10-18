@@ -5,7 +5,7 @@ from presenters import PostPresenter
 
 class TestPostPresenter:
 
-    def test_to_json(self):
+    def test_present(self):
         presenter = PostPresenter()
         model = Post()
         model.id = ObjectId()
@@ -14,7 +14,7 @@ class TestPostPresenter:
         model.author_id = ObjectId()
         model.comment_ids = [ObjectId(), ObjectId(), ObjectId()]
 
-        result = presenter.to_json(model)
+        result = presenter.present(model)
         
         assert isinstance(result, dict)
         assert str(model.id) == result["id"]

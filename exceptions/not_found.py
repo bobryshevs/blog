@@ -1,12 +1,11 @@
 from .base_exception import BaseAppException
-from enums import HTTPStatus
 
 
 class NotFound(BaseAppException):
     def __init__(self, value: dict = None, *args: object) -> None:
         super().__init__(*args)
         self.set_value(value)
-        self.code = HTTPStatus.NOT_FOUND
+        self.code = 404
 
     def set_value(self, value) -> None:
         if value:
