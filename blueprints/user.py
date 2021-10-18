@@ -1,24 +1,14 @@
 from flask import (
     Blueprint,
-    json,
     request,
-    jsonify
 )
 from flasgger import swag_from
 
 from structure import (
-    user_service,
-    user_presenter,
-    token_pair_presenter
-)
-from exceptions import (
-    Conflict,
-    BadRequest,
-    Unauthorized
-)
-from models import (
-    User,
-    TokenPair
+    create_user_handler,
+    login_handler,
+    refresh_handler,
+    logout_handler
 )
 users = Blueprint("users", __name__)
 
@@ -26,46 +16,22 @@ users = Blueprint("users", __name__)
 @users.route("/", methods=["POST"])
 @swag_from("../swagger/user/create_user.yml")
 def create():
-    try:
-        user: User = user_service.create(request.json)
-    except BadRequest as err:
-        return jsonify(err.value), err.code
-    except Conflict as err:
-        return jsonify(err.value), err.code
-    return user_presenter.to_json(user), 200
+    return create_user_handler.handle(request)
 
 
 @users.route("/login", methods=["POST"])
 @swag_from("../swagger/user/login.yml")
 def login():
-    try:
-        tockens: TokenPair = user_service.login(request.json)
-    except BadRequest as err:
-        return jsonify(err.value), err.code
-    return jsonify(token_pair_presenter.to_json(tockens)), 200
+    return login_handler.handle(request)
 
 
 @users.route("/refresh", methods=["POST"])
 @swag_from("../swagger/user/refresh.yml")
 def refresh():
-    try:
-        tokens: TokenPair = user_service.refresh(request.json)
-    except BadRequest as err:
-        return jsonify(err.value), err.code
-    except Unauthorized as err:
-        return jsonify(err.value), err.code
-
-    return jsonify(token_pair_presenter.to_json(tokens)), 200
+    return refresh_handler.handle(request)
 
 
 @users.route("/logout", methods=["POST"])
 @swag_from("../swagger/user/logout.yml")
 def logout():
-    access = request.headers.get("Authorization").split(" ")[1]
-    try:
-        user_service.logout({"access": access})
-    except Unauthorized as err:
-        return jsonify(err.value), err.code
-    except BadRequest as err:
-        return jsonify(err.value), err.code
-    return jsonify({}), 200
+    return logout_handler.handle(request)

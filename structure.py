@@ -1,5 +1,3 @@
-
-from bson.objectid import ObjectId
 from dotenv import dotenv_values
 
 from json_serializers import JsonPostSerializer
@@ -43,7 +41,12 @@ from handlers import (
     GetPostHandler,
     DeletePostHandler,
     UpdatePostHandler,
-    GetPostPageHanlder
+    GetPostPageHanlder,
+
+    CreateUserHandler,
+    LoginHandler,
+    RefreshHandler,
+    LogoutHandler
 )
 from response_builder import ResponseBuilder
 
@@ -345,5 +348,34 @@ get_post_page_handler = GetPostPageHanlder(
     token_service=token_service,
     service=post_service,
     presenter=post_presenter,
+    response_builder=response_builder
+)
+
+
+# -- User Handlers -- #
+
+# ___ CREATE_USER_Handler ___ #
+create_user_handler = CreateUserHandler(
+    token_service=token_service,
+    service=user_service,
+    presenter=user_presenter,
+    response_builder=response_builder
+)
+login_handler = LoginHandler(
+    token_service=token_service,
+    service=user_service,
+    presenter=token_pair_presenter,
+    response_builder=response_builder
+)
+refresh_handler = RefreshHandler(
+    token_service=token_service,
+    service=user_service,
+    presenter=token_pair_presenter,
+    response_builder=response_builder
+)
+logout_handler = LogoutHandler(
+    token_service=token_service,
+    service=user_service,
+    presenter=user_presenter,
     response_builder=response_builder
 )

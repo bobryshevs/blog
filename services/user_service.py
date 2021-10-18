@@ -120,11 +120,12 @@ class UserService:
         Parameters
         ----------
         args: dict
-            access: str
+            "access": str,
+            "principle": User
         """
         self.logout_validate_service.validate(args)
         access: str = args["access"]
-        user: User = self.get_by_token(access)
+        user = args["principle"]
 
         if not self.remove_token_pair(user, TokenType.ACCESS, access):
             raise Unauthorized({"msg": "token expired"})
