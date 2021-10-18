@@ -1,6 +1,10 @@
+from flask import Response
+from bson import ObjectId
 from mock import Mock
 
 from handlers.base_handler import BaseHandler
+from enums import HTTPStatus
+from models import User
 
 
 class TestBaseHandler:
@@ -9,32 +13,45 @@ class TestBaseHandler:
         self.service = Mock()
         self.presenter = Mock()
         self.response_builder = Mock()
+        self.response_status = HTTPStatus.TEST
         self.handler = BaseHandler(
             token_service=self.token_service,
             service=self.service,
             presenter=self.presenter,
-            response_builder=self.response_builder
+            response_builder=self.response_builder,
+            response_status=self.response_status
         )
 
     def test_handle(self):
-        exec_result = {}
-        exec_status = 200
-        self.handler.execute = Mock(return_value=(exec_result, exec_status))
+        user_id = ObjectId()
+
+        get_principle_val = User(id=user_id)
+        self.token_service.get_principle = Mock(return_value=get_principle_val)
+
+        execute_value = User(id=user_id)
+        self.handler.execute = Mock(return_value=execute_value)
+
+        presenter_value = {"id": user_id}
+        self.presenter.present = Mock(return_value=presenter_value)
+
+        response_builder_value = Response(status=int(self.response_status))
+        self.response_builder.build = Mock(return_value=response_builder_value)
+
         request = Mock()
-        headers = {}
-        request.headers = headers
-        user = object()
-        response = object()
+        request.headers = {"Authorization": "Bearer big_token_string"}
+        result = self.handler.handle(request)
 
-        self.token_service.get_principle.return_value = user
-        self.response_builder.build.return_value = response
-
-        handler_result = self.handler.handle(request)
-
-        self.token_service.get_principle.assert_called_once_with(headers)
-        self.handler.execute.assert_called_once_with(request, user)
-        self.response_builder.build.assert_called_once_with(
-            data=exec_result,
-            status=exec_status
+        assert isinstance(result, Response)
+        self.token_service.get_principle.assert_called_once_with(
+            request.headers
         )
-        assert handler_result == response
+        self.handler.execute.assert_called_once_with(
+            request,
+            get_principle_val
+        )
+        self.presenter.present.assert_called_once_with(execute_value)
+        self.response_builder.build.assert_called_once_with(
+            data=presenter_value,
+            status=int(self.response_status)
+        )
+        assert result == response_builder_value
