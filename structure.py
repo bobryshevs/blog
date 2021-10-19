@@ -304,7 +304,8 @@ post_service = PostService(
 token_service = TokenService(
     jwt_wrapper=jwt_wrapper,
     user_service=user_service,
-    token_validate_service=token_validate_service
+    token_validate_service=token_validate_service,
+    token_validator=jwt_token_validator
 )
 
 # -- RESPONSE BUILDERS -- #
