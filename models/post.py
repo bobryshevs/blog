@@ -3,11 +3,11 @@ from models.model import Model
 
 
 class Post(Model):
-    def __init__(self, id: ObjectId = None):
+    def __init__(self, id: ObjectId = None, author_id: ObjectId = None):
         self.id: ObjectId = id
         self.title: str = None
         self.content: str = None
-        self.author_id: ObjectId = None
+        self.author_id: ObjectId = author_id
         self.comment_ids: list[ObjectId] = []
 
     @staticmethod

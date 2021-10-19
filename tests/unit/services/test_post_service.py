@@ -1,11 +1,10 @@
-from exceptions.not_found import NotFound
 import pytest
 from bson.objectid import ObjectId
 from mock import Mock
 
-
+from exceptions import NotFound, Forbidden
 from services import PostService
-from models import Post, User
+from models import Post, User, Page
 
 
 class TestPostService:
@@ -17,6 +16,7 @@ class TestPostService:
         self.object_id_validate_service = Mock()
         self.update_validate_service = Mock()
         self.get_by_id_validate_service = self.object_id_validate_service
+        self.delete_validate_service = self.object_id_validate_service
 
         self.service = PostService(
             repository=self.repository,
@@ -136,51 +136,65 @@ class TestPostService:
         assert result.author_id == args["author_id"]
 
     def test_delete_not_found(self):
+        self.service.principle_check_none = Mock(return_value=None)
+        self.delete_validate_service.validate = Mock(return_value=True)
+        self.service.get_by_id = Mock(side_effect=NotFound({}))
+
+        principle = User(id=ObjectId())
         args = {"id": ObjectId()}
-        expected_post = None
-        post_service = PostService(*self.mock_arg_list)
-        post_service.get_by_id = Mock(return_value=None, side_effect=NotFound)
+        with pytest.raises(NotFound) as err:
+            self.service.delete(args, principle)
 
-        principle = Mock()
-        principle.id = ObjectId()
-
-        with pytest.raises(NotFound):
-            post_service.delete(args, principle)
-        post_service.delete_validate_service.validate \
-            .assert_called_once_with(args)
+        assert err.value.code == 404
+        self.service.principle_check_none.assert_called_once_with(principle)
+        self.delete_validate_service.validate.assert_called_once_with(args)
+        self.service.get_by_id.assert_called_once_with(args["id"])
 
     def test_delete_exists(self):
+        self.service.principle_check_none = Mock(return_value=None)
+        self.delete_validate_service.validate = Mock(return_value=True)
 
-        args = {"id": ObjectId()}
-        expected_post = Post()
-        expected_post.author_id = args["id"]
-        post_service = PostService(*self.mock_arg_list)
-        post_service.get_by_id = Mock(return_value=expected_post)
+        principle = User(id=ObjectId())
+        get_by_id_value = Post(id=ObjectId(), author_id=principle.id)
+        self.service.get_by_id = Mock(return_value=get_by_id_value)
+        self.repository.delete = Mock(return_value=None)
 
-        principle = Mock()
-        principle.id = args["id"]
+        args = {"id": get_by_id_value.id}
+        self.service.delete(args, principle)
 
-        post_service.delete(args, principle)
+        self.service.principle_check_none.assert_called_once_with(principle)
+        self.delete_validate_service.validate.assert_called_once_with(args)
+        self.service.get_by_id.assert_called_once_with(args["id"])
 
-        post_service.delete_validate_service.validate \
-            .assert_called_once_with(args)
-        post_service.repository.delete.assert_called_once_with(args['id'])
+    def test_delete_forbidden(self):
+        self.service.principle_check_none = Mock(return_value=None)
+        self.delete_validate_service.validate = Mock(return_value=True)
+
+        principle = User(id=ObjectId())
+        get_by_id_value = Post(id=ObjectId(), author_id=ObjectId())
+        self.service.get_by_id = Mock(return_value=get_by_id_value)
+
+        args = {"id": get_by_id_value.id}
+        with pytest.raises(Forbidden) as err:
+            self.service.delete(args, principle)
+
+        assert err.value.code == 403
+        self.service.principle_check_none.assert_called_once_with(principle)
+        self.delete_validate_service.validate.assert_called_once_with(args)
+        self.service.get_by_id.assert_called_once_with(args["id"])
 
     def test_get_page(self):
-        args = {
-            "page": 1,
-            "page_size": 3
-        }
-        expected_list = []
-        post_service = PostService(*self.mock_arg_list)
-        post_service.repository.get_page.return_value = expected_list
+        self.get_page_validate_service.validate = Mock(return_value=True)
 
-        result_list = post_service.get_page(args)
+        repository_get_page_value = Page()
+        self.repository.get_page = Mock(return_value=repository_get_page_value)
 
-        post_service.get_page_validate_service.validate \
-            .assert_called_once_with(args)
-        post_service.repository.get_page.assert_called_once_with(
-            args['page'],
-            args['page_size']
+        args = {"page": 1, "page_size": 2}
+        result = self.service.get_page(args)
+
+        assert isinstance(result, Page)
+        self.get_page_validate_service.validate.assert_called_once_with(args)
+        self.repository.get_page.assert_called_once_with(
+            args["page"],
+            args["page_size"]
         )
-        assert expected_list == result_list
