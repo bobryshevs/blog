@@ -1,4 +1,5 @@
 from bson import ObjectId
+import math
 from models import Model, Page
 
 
@@ -47,3 +48,8 @@ class MongoRepository:
 
     def documents_count(self) -> int:
         return self.collection.count_documents({})
+
+    def get_number_of_pages(self, page_size: int) -> int:
+        number_of_documents = self.collection.count_documents({})
+        number_of_pages = math.ceil(number_of_documents / page_size)
+        return number_of_pages if number_of_pages != 0 else 1
