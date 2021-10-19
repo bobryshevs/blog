@@ -8,7 +8,7 @@ from repositories import (
 )
 from translators import (
     PostTranslator,
-    UserTranslator
+    UserTranslator,
 )
 from presenters import (
     PostPresenter,
@@ -86,7 +86,7 @@ post_repository = PostRepository(
 )
 user_repository = UserRepository(
     collection=mongo_client.blog_database.users,
-    translator=user_translator
+    translator=user_translator,
 )
 
 # --- Presenters --- #

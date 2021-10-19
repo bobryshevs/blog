@@ -1,6 +1,5 @@
-from models.model import Model
 from bson import ObjectId
-from models import Model
+from models import Model, Page
 
 
 class MongoRepository:
@@ -45,3 +44,6 @@ class MongoRepository:
 
     def exists(self, obj_id: ObjectId) -> bool:
         return self.get_by_id(obj_id) is not None
+
+    def documents_count(self) -> int:
+        return self.collection.count_documents({})
