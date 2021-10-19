@@ -20,15 +20,10 @@ class TestTokenCleanerFunctions:
 
     def test_get_alive_token_pairs(self):
         # bool values ​​are used for clarity of the algorithm
-        bool_values = [True, True, False, True, False, False]
-        token_pairs = [
-            TokenPair("", refresh=index)
-            for index in range(len(bool_values))
-        ]
+        token_validator_side_effect = [True, True, False, True, False, False]
+        token_pairs = [TokenPair("", "")for _ in token_validator_side_effect]
 
-        self.token_validator.valid = Mock(side_effect=bool_values)
+        self.token_validator.valid.side_effect = token_validator_side_effect
 
         result = self.service.get_alive_token_pairs(token_pairs)
-        assert len(result) == bool_values.count(True)
-        for token_pair in result:
-            assert bool_values[token_pair.refresh] is True
+        assert len(result) == token_validator_side_effect.count(True)
