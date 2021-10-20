@@ -49,9 +49,9 @@ class TokenService:
             self.process_users(users)
             self.update_database_values(repository, users)
 
-    def update_db_values(self, repository: UserRepository, users: list[User]):
+    def update_db_values(self, users: list[User]):
         for user in users:
-            repository.update_user_token(user)
+            self.user_service.repository.update_user_token(user)
 
     def process_users(self, users: list[User]):
         for user in users:

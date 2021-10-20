@@ -16,7 +16,7 @@ tests: up
 unit: up
 	docker exec -it ${APP_NAME} pytest ./tests/unit
 
-tests: up
+integration: up
 	docker exec -it ${APP_NAME} pytest ./tests/integration
 
 ipython: up
