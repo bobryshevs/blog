@@ -13,3 +13,8 @@ app = Celery(
     backend="rpc://"
 )
 app.autodiscover_tasks(force=True)
+
+
+@app.task
+def print_sum(a: int, b: int) -> int:
+    return a + b
