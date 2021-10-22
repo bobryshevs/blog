@@ -23,7 +23,7 @@ ipython: up
 	docker exec -it ${APP_NAME} ipython
 
 celery: up
-	docker exec -it ${CELERY_APP_NAME} sh
+	docker exec -it ${CELERY_APP_NAME} ipython
 
 down:
 	docker-compose down --remove-orphans
