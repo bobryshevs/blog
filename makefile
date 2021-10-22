@@ -22,5 +22,8 @@ integration: up
 ipython: up
 	docker exec -it ${APP_NAME} ipython
 
+celery: up
+	docker exec -it ${CELERY_APP_NAME} sh
+
 down:
 	docker-compose down --remove-orphans
